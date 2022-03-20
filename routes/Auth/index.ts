@@ -19,10 +19,11 @@ import {
   validateResetPassword,
   validateSignIn,
 } from '../../validators/Auth';
+import { confirmValidation } from '../../utils';
 
 const router = Router();
 
-router.post('/login', validateSignIn(), verifySignIn, signIn);
+router.post('/login', validateSignIn(), confirmValidation, verifySignIn, signIn);
 router.get('/logout', signOut);
 router.get('/status', status);
 router.get(
@@ -34,12 +35,14 @@ router.post('/email-confirmation', confirmEmail);
 router.post(
   '/request-reset-password',
   validateRequestResetPassword(),
+  confirmValidation,
   requestResetPassword
 );
 router.post('/confirm-reset-password', confirmResetPassword);
 router.post(
   '/reset-password',
   validateResetPassword(),
+  confirmValidation,
   verifyResetPassword,
   resetPassword
 );

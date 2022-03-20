@@ -5,11 +5,10 @@ const Nominee = new Schema({
     type: String,
     required: true,
   },
+  regno: Number,
   level: Number,
-  regNo: Number,
   picture: String,
   votes: Number,
-  session: { type: Schema.Types.ObjectId, ref: 'Session' },
   category: { type: Schema.Types.ObjectId, ref: 'Category' }
 });
 

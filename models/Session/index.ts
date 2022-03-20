@@ -9,10 +9,6 @@ const Session = new Schema({
     type: String,
     unique: true,
   },
-  uniqueCode: {
-    type: String,
-    unique: true
-  },
   description: String,
   logo: String,
   startDate: Date,

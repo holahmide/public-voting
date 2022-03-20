@@ -20,17 +20,19 @@ export const validateCreateSession = () => [
 ];
 
 export const validateUpdateSession = () => [
-    body('title')
+  body('title')
     .optional()
     .trim()
     .escape(),
-  body('description').trim().escape(),
+  body('description').optional().trim().escape(),
   body('startDate')
+    .optional()
     .isDate()
     .withMessage('The start date has to be a date')
     .trim()
     .escape(),
-    body('endDate')
+  body('endDate')
+    .optional()
     .isDate()
     .withMessage('The end date has to be a date')
     .trim()

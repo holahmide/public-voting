@@ -43,11 +43,12 @@ export const validateUpdateUser = () => [
     .escape(),
   body('regNo').optional().trim().escape(),
   body('firstName')
+    .optional()
     .exists()
     .withMessage('firstName is required')
     .trim()
     .escape(),
-  body('lastName').exists().withMessage('lastName is required').trim().escape(),
+  body('lastName').optional().exists().withMessage('lastName is required').trim().escape(),
 ];
 
 export const validateChangePassword = () => [

@@ -1,15 +1,9 @@
 import { Schema, model } from 'mongoose';
 
-const Nominee = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  level: Number,
-  regNo: Number,
-  picture: String,
+const Vote = new Schema({
   category : { type: Schema.Types.ObjectId, ref: 'Category' },
+  nominee : { type: Schema.Types.ObjectId, ref: 'Nominee' },
   user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
-export default model('Nominee', Nominee);
+export default model('Vote', Vote);

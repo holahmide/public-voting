@@ -6,13 +6,6 @@ import { serverError } from '../../utils';
 
 export const verifyCreateUser: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.array(),
-    });
-  }
   try {
     const userEmailTest = await User.findOne({ email });
     if (userEmailTest) {
@@ -37,17 +30,10 @@ export const verifyCreateUser: RequestHandler = async (req, res, next) => {
 };
 
 export const verifyUpdateUser: RequestHandler = async (req: any, res, next) => {
-  const errors = validationResult(req);
   const { email, phone, roles, isConfirmed } = req.body;
   if (roles) delete req.body.roles;
   if (isConfirmed) delete req.body.isConfirmed;
   const { user } = req;
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.array(),
-    });
-  }
   try {
     const userExists = await User.exists({ _id: user });
     if (!userExists) {
@@ -104,14 +90,6 @@ export const verifyChangePassword: RequestHandler = async (
 ) => {
   const { oldPassword, newPassword } = req.body;
   const { user: user_id } = req;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.array(),
-    });
-  }
-
   try {
     const user = await User.findById(user_id);
     const isValid = await user.validatePassword(oldPassword);

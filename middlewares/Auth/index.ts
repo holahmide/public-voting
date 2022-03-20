@@ -90,13 +90,6 @@ export const verifySignIn: RequestHandler = async (req, res, next) => {
 
 export const verifyResetPassword: RequestHandler = async (req, res, next) => {
   const { token } = req.body;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.array(),
-    });
-  }
   if (!token) {
     return res.status(422).json({
       status: false,
