@@ -7,6 +7,13 @@ interface SendMailReturn {
   message: any;
 }
 
+interface GraphqlContext {
+  user: string;
+  isLoggedIn: boolean;
+  isAdmin: boolean;
+  isSuperUser: boolean;
+}
+
 type SendMail = (
   email: string | string[],
   subject: string,
