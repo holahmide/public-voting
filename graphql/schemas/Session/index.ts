@@ -30,6 +30,7 @@ export default gql`
     level: Int
     picture: String
     votes: Int
+    computedVotes: Int
     category: Category
     createdAt: String
     updatedAt: String
@@ -53,6 +54,6 @@ export default gql`
     nomineeById(id: String): Nominee
     nomineesByCategory(category: String): [Nominee]
     voteById(id: String): Vote
-    votesByNominee(id: String): [Vote]
+    votesByNominee(nominee: String): [Vote]
   }
 `;

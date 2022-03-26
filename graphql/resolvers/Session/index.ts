@@ -16,6 +16,10 @@ export default {
   Nominee: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
     createdAt: (parent: any) => parent.created_at.toString(),
+    computedVotes: async (parent: any) => {
+      const count = await Vote.find({ nominee: parent.id });
+      return count.length;
+    },
   },
   Vote: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
@@ -62,15 +66,17 @@ export default {
     },
     votesByNominee: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {
-        return await Vote.find({ category: args.nominee }).populate(
-          'nominee'
-        );
+        return await Vote.find({ nominee: args.nominee })
+          .populate('nominee')
+          .populate('category');
       }
       return new ApolloError('you are not logged in');
     },
     voteById: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {
-        const vote = await Vote.findById(args.id).populate('category');
+        const vote = await Vote.findById(args.id)
+          .populate('nominee')
+          .populate('category');
         if (vote) return vote;
         return new ApolloError('vote not found');
       }
