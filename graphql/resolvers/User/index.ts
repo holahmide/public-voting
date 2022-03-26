@@ -27,12 +27,12 @@ export default {
       return new AuthenticationError('you are not a super user');
     },
     userById: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isSuperUser) {
+      // if (context.isSuperUser) {
         const user = await User.findById(args.id).populate('roles');
         if (user) return user;
         return new ApolloError('user not found');
-      }
-      return new AuthenticationError('you are not a super user');
+      // }
+      // return new AuthenticationError('you are not a super user');
     },
     tokens: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isSuperUser) {
