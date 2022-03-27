@@ -10,6 +10,7 @@ export const PORT = process.env.PORT || 3000;
 export const DB_URL = process.env.DB_URL || '';
 export const DB_USER_ROLES = [
   'ADMIN',
+  'SUPER_USER'
 ];
 export const INITIALIZE_DB = InitializeDB;
 

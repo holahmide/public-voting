@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { validateCreateUser, validateUpdateUser, validateChangePassword } from '../../validators/User';
 import { verifyCreateUser, findUser, verifyUpdateUser, verifyChangePassword } from '../../middlewares/User';
-import { createUser, updateUser, deleteUser, changePassword } from '../../controllers/User';
-import { isAuthenticated, isSuperUser } from '../../middlewares/Auth';
+import { createUser, updateUser, deleteUser, changePassword, addRole, removeRole } from '../../controllers/User';
+import { isAuthenticated, isSuperUser, isAdmin } from '../../middlewares/Auth';
 import { confirmValidation } from '../../utils';
 
 const router = Router();
@@ -33,6 +33,22 @@ router.post(
   confirmValidation,
   verifyChangePassword,
   changePassword
+);
+
+router.get(
+  '/add-role/:id/:roleId',
+  isAuthenticated,
+  isAdmin,
+  findUser,
+  addRole
+);
+
+router.delete(
+  '/remove-role/:id/:roleId',
+  isAuthenticated,
+  isAdmin,
+  findUser,
+  removeRole
 );
 
 export default router;
