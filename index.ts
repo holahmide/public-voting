@@ -25,10 +25,11 @@ cloudinary.v2.config({
   await graphql.start();
   graphql.applyMiddleware({
     app,
-    // cors: {
-    //   origin: CORS_ORIGINS,
-    //   credentials: true,
-    // },
+    cors: {
+      origin: CORS_ORIGINS,
+      credentials: true,
+      exposedHeaders: ['set-cookie']
+    },
   });
 })();
 

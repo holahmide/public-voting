@@ -30,7 +30,7 @@ export const signIn: RequestHandler = async (req, res) => {
       data: {
         user: {
           id: user._id,
-          token: access_token,
+          // token: access_token,
         },
       },
     });
@@ -42,9 +42,11 @@ export const signIn: RequestHandler = async (req, res) => {
 export const status: RequestHandler = async (req, res) => {
   const { access_token } = req.cookies;
   try {
-    jwt.verify(access_token, JWT_SECRET);
+    const decoded = jwt.verify(access_token, JWT_SECRET);
     return res.status(200).json({
       status: true,
+      // @ts-ignore
+      user: decoded.id,
       message: 'user is still authenticated',
     });
   } catch (err) {
