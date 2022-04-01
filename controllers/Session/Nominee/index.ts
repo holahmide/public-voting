@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { serverError, uploadMedia } from '../../../utils';
 import Nominee from '../../../models/Session/Nominee';
+import Category from '../../../models/Session/Category';
 
 export const createNominee: RequestHandler = async (req, res) => {
   try {
@@ -31,6 +32,51 @@ export const createNominee: RequestHandler = async (req, res) => {
   }
 };
 
+export const createMultipleNominee: RequestHandler = async (req: any, res) => {
+  try {
+    const nominees = JSON.parse(req.body.nominees);
+    const resultArray = await Promise.all(
+      nominees.map(async (nominee: any) => {
+        let findCategory = await Category.findOne({ _id: nominee.category });
+        if (!findCategory) return;
+        let findNominee = await Nominee.findOne({
+          name: nominee.name,
+          category: nominee.category,
+        });
+        if (findNominee) return;
+        const createdNominee = await Nominee.create({
+          ...nominee,
+        });
+        if (req.files) {
+          const imageIndex = req.files.findIndex(
+            (el: any) => el.fieldname == `image-${nominee.s_n}`
+          );
+          if (imageIndex > -1) {
+            const image = await uploadMedia(
+              req.files[imageIndex],
+              `voting/sessions/${createdNominee._id}`,
+              createdNominee._id
+            );
+            createdNominee['picture'] = image.secure_url;
+            createdNominee.save();
+          }
+        }
+
+        return createdNominee;
+      })
+    );
+
+    return res.status(201).json({
+      status: true,
+      data: {
+        resultArray,
+      },
+    });
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
 export const updateNominee: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
 
@@ -49,7 +95,7 @@ export const updateNominee: RequestHandler = async (req: any, res) => {
     }
 
     updatedNominee.save();
-    
+
     return res.status(200).json({
       status: true,
       data: {

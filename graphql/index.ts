@@ -21,7 +21,6 @@ const graphqlServer = new ApolloServer({
   context: async ({req}) => {
     const { access_token } = req.cookies;
     const user_id = getUser(access_token);
-    console.log(user_id);
     const user = await User.findById(user_id).populate('roles');
     const userRoles = user_id !== null ? user.roles : [];
     return {

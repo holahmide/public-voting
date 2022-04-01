@@ -2,15 +2,12 @@ import slugify from 'slugify';
 import { RequestHandler } from 'express';
 import { serverError, uploadMedia } from '../../utils';
 import Session from '../../models/Session';
+import Category from '../../models/Session/Category';
 
 export const createSession: RequestHandler = async (req: any, res) => {
   const { user } = req;
+  let { categories } = req.body;
   try {
-    const createdSession = await Session.create({
-      ...req.body,
-      user,
-    });
-
     // Creating session unique slug
     let unique = false;
     let count = 0;
@@ -21,10 +18,15 @@ export const createSession: RequestHandler = async (req: any, res) => {
       const findSlug = await Session.findOne({ slug });
       if (!findSlug) {
         unique = true;
-        createdSession.slug = slug;
+        req.body.slug = slug;
       }
       count += 1;
     }
+
+    const createdSession = await Session.create({
+      ...req.body,
+      user,
+    });
 
     // upload images
     if (req.file) {
@@ -34,6 +36,14 @@ export const createSession: RequestHandler = async (req: any, res) => {
         createdSession._id
       );
       createdSession['logo'] = image.secure_url;
+    }
+
+    // Create categories if passed
+    categories = JSON.parse(categories);
+    if (categories && categories.length > 0) {
+      categories.map((category: any) => {
+        Category.create({ name: category.name, session: createdSession._id });
+      });
     }
 
     createdSession.save();
@@ -82,7 +92,7 @@ export const updateSession: RequestHandler = async (req: any, res) => {
     }
 
     updatedSession.save();
-    
+
     return res.status(200).json({
       status: true,
       data: {

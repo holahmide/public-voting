@@ -5,11 +5,12 @@ export default gql`
     id: ID!
     title: String
     slug: String
-    description: Int
+    description: String
     logo: String
     isActive: Boolean
     user: User
     categories: [Category]
+    nominees: [Nominee]
     startDate: String
     endDate: String
     createdAt: String

@@ -12,6 +12,15 @@ export default {
     createdAt: (parent: any) => parent.created_at.toString(),
     categories: async (parent: any) =>
       await Category.find({ session: parent.id }),
+    nominees: async (parent: any) => {
+      let nominees: any = [];
+      const categories = await Category.find({ session: parent.id });
+      categories.map(async (category) => {
+        const findNominees = await Nominee.find({ category: category._id }).populate('category');
+        nominees = nominees.concat(findNominees);
+      });
+      return nominees;
+    },
   },
   Nominee: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
@@ -42,7 +51,9 @@ export default {
     },
     sessionBySlug: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {
-        const session = await Session.findById(args.slug).populate('user');
+        const session = await Session.findOne({ slug: args.slug }).populate(
+          'user'
+        );
         if (session) return session;
         return new ApolloError('session not found');
       }

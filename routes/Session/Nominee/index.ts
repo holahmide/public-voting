@@ -11,6 +11,7 @@ import {
 } from '../../../middlewares/Session/Nominee';
 import {
   createNominee,
+  createMultipleNominee,
   updateNominee,
   deleteNominee,
 } from '../../../controllers/Session/Nominee';
@@ -28,6 +29,13 @@ router.post(
   findCategory,
   verifyCreateNominee,
   createNominee
+);
+
+router.post(
+  '/create/multiple',
+  isAuthenticated,
+  multer.any(),
+  createMultipleNominee
 );
 
 router.put(
