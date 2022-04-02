@@ -41,6 +41,7 @@ router.post(
 router.put(
   '/update/:id',
   isAuthenticated,
+  multer.single('picture'),
   validateUpdateNominee(),
   confirmValidation,
   verifyUpdateNominee,

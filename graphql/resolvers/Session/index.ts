@@ -15,10 +15,12 @@ export default {
     nominees: async (parent: any) => {
       let nominees: any = [];
       const categories = await Category.find({ session: parent.id });
-      categories.map(async (category) => {
-        const findNominees = await Nominee.find({ category: category._id }).populate('category');
+      for (let i = 0; i < categories.length; i++) {
+        const findNominees = await Nominee.find({
+          category: categories[i]._id,
+        }).populate('category');
         nominees = nominees.concat(findNominees);
-      });
+      }
       return nominees;
     },
   },

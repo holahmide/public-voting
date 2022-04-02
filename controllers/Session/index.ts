@@ -3,6 +3,7 @@ import { RequestHandler } from 'express';
 import { serverError, uploadMedia } from '../../utils';
 import Session from '../../models/Session';
 import Category from '../../models/Session/Category';
+import fs from 'fs';
 
 export const createSession: RequestHandler = async (req: any, res) => {
   const { user } = req;
@@ -36,6 +37,9 @@ export const createSession: RequestHandler = async (req: any, res) => {
         createdSession._id
       );
       createdSession['logo'] = image.secure_url;
+
+      // Delete image from local folder
+      fs.unlinkSync(req.file.path);
     }
 
     // Create categories if passed

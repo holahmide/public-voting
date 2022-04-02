@@ -33,7 +33,7 @@ export const verifyUpdateNominee: RequestHandler = async (
       req.body.name = req.body.name.toLowerCase();
       let { name, category } = req.body;
       const findNominee = await Nominee.exists({ name, category });
-      if (findNominee) {
+      if (findNominee && (findNominee._id != req.body.id && findNominee._id != req.body._id)) {
         return res.status(404).json({
           status: false,
           message: `nominee (${name}) already exist for this category`,

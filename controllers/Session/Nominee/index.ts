@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { serverError, uploadMedia } from '../../../utils';
 import Nominee from '../../../models/Session/Nominee';
 import Category from '../../../models/Session/Category';
+import fs from 'fs';
 
 export const createNominee: RequestHandler = async (req, res) => {
   try {
@@ -17,6 +18,8 @@ export const createNominee: RequestHandler = async (req, res) => {
         createdNominee._id
       );
       createdNominee['picture'] = image.secure_url;
+      // Delete image from local folder
+      fs.unlinkSync(req.file.path);
     }
 
     createdNominee.save();
@@ -59,6 +62,8 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
             );
             createdNominee['picture'] = image.secure_url;
             createdNominee.save();
+            // Delete image from local folder
+            fs.unlinkSync(req.files[imageIndex].path);
           }
         }
 
