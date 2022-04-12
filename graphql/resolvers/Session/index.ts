@@ -58,8 +58,12 @@ export default {
         );
         if (session) return session;
         return new ApolloError('session not found');
+      } else {
+        const session = await Session.findOne({ slug: args.slug });
+        if (session) return session;
+        return new ApolloError('session not found');
       }
-      return new ApolloError('you are not logged in');
+      // return new ApolloError('you are not logged in');
     },
     nomineesByCategory: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {

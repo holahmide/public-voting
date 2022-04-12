@@ -12,7 +12,7 @@ router.post('/create', isAuthenticated, multer.single('logo'), validateCreateSes
 router.put(
   '/update/:id',
   isAuthenticated,
-  multer.any(),
+  multer.single('logo'),
   validateUpdateSession(),
   confirmValidation,
   updateSession

@@ -24,7 +24,6 @@ export const validateCreateUser = () => [
     .withMessage('email is invalid')
     .trim()
     .escape(),
-  body('regNo').exists().withMessage('regNo is required').trim().escape(),
   body('firstName')
     .exists()
     .withMessage('firstName is required')

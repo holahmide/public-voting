@@ -10,6 +10,6 @@ export const validateCreateSession = () => [
 export const validateUpdateSession = () => [
   body('title').optional().trim().escape(),
   body('description').optional().trim().escape(),
-  check('startDate').isISO8601().toDate(),
-  check('endDate').isISO8601().toDate(),
+  check('startDate').optional().isISO8601().toDate(),
+  check('endDate').optional().isISO8601().toDate(),
 ];

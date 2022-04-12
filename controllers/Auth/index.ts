@@ -30,7 +30,7 @@ export const signIn: RequestHandler = async (req, res) => {
       data: {
         user: {
           id: user._id,
-          // token: access_token,
+          token: access_token,
         },
       },
     });
@@ -43,10 +43,13 @@ export const status: RequestHandler = async (req, res) => {
   const { access_token } = req.cookies;
   try {
     const decoded = jwt.verify(access_token, JWT_SECRET);
+      // @ts-ignore
+    const userData = await User.findOne({_id : decoded.id});
     return res.status(200).json({
       status: true,
       // @ts-ignore
       user: decoded.id,
+      userData,
       message: 'user is still authenticated',
     });
   } catch (err) {

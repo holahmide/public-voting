@@ -78,7 +78,7 @@ export const updateSession: RequestHandler = async (req: any, res) => {
       const slug = `${slugify(req.body.title, { lower: true })}${postfix}`;
       // eslint-disable-next-line no-await-in-loop
       const findSlug = await Session.findOne({ slug });
-      if (!findSlug) {
+      if (!findSlug || findSlug._id == id) {
         unique = true;
         updatedSession.slug = slug;
       }
