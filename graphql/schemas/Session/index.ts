@@ -22,6 +22,8 @@ export default gql`
     name: String
     description: String
     session: Session
+    nominees: [Nominee]
+    isVoted: Boolean
   }
 
   type Nominee {
@@ -31,6 +33,7 @@ export default gql`
     level: Int
     picture: String
     votes: Int
+    isVoted: Boolean
     computedVotes: Int
     category: Category
     createdAt: String

@@ -1,7 +1,5 @@
 import { ApolloError, AuthenticationError } from 'apollo-server-express';
-import Token from '../../../models/Token';
 import User from '../../../models/User';
-import Role from '../../../models/User/role';
 
 export default {
   User: {
@@ -21,41 +19,15 @@ export default {
     users: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isSuperUser) {
         return {
-            data: User.find({})
-        }
-      }
-      return new AuthenticationError('you are not a super user');
-    },
-    userById: async (_: any, args: any, context: GraphqlContext) => {
-      // if (context.isSuperUser) {
-        const user = await User.findById(args.id).populate('roles');
-        if (user) return user;
-        return new ApolloError('user not found');
-      // }
-      // return new AuthenticationError('you are not a super user');
-    },
-    tokens: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isSuperUser) {
-        const tokens = await Token.find({ });
-        return {
-          tokens
+          data: User.find({}),
         };
       }
       return new AuthenticationError('you are not a super user');
     },
-    tokenById: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isSuperUser) {
-        const token = await Token.findById(args.id).populate('user');
-        if (token) return token;
-        return new ApolloError('token not found');
-      }
-      return new AuthenticationError('you are not a super user');
-    },
-    roles: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isSuperUser) {
-        return Role.find({});
-      }
-      return new AuthenticationError('you are not a super user');
+    userById: async (_: any, args: any, context: GraphqlContext) => {
+      const user = await User.findById(args.id).populate('roles');
+      if (user) return user;
+      return new ApolloError('user not found');
     },
   },
 };

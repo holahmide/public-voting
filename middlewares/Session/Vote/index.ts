@@ -20,6 +20,13 @@ export const verifyCreateVote: RequestHandler = async (
     }
     const findNominee:any = await Nominee.findOne({ _id: nominee }).populate('category');
     req.body.category = findNominee.category._id;
+    const checkIfUserHasVotedForCategory = await Vote.exists({ category:findNominee.category._id, user });
+    if (checkIfUserHasVotedForCategory) {
+      return res.status(404).json({
+        status: false,
+        message: `you have already voted for this category`,
+      });
+    }
     next();
   } catch (err) {
     serverError(res, err);

@@ -31,6 +31,30 @@ export default {
       const count = await Vote.find({ nominee: parent.id });
       return count.length;
     },
+    isVoted: async (parent: any, _: any, context: GraphqlContext) => {
+      const findVote = await Vote.findOne({
+        nominee: parent.id,
+        user: context.user,
+      });
+      if (findVote == null) return false;
+      else return true;
+    },
+  },
+  Category: {
+    nominees: async (parent: any) => {
+      const findNominees = await Nominee.find({
+        category: parent.id,
+      });
+      return findNominees;
+    },
+    isVoted: async (parent: any, _: any, context: GraphqlContext) => {
+      const findVote = await Vote.findOne({
+        category: parent.id,
+        user: context.user,
+      });
+      if (findVote == null) return false;
+      else return true;
+    },
   },
   Vote: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
@@ -63,7 +87,6 @@ export default {
         if (session) return session;
         return new ApolloError('session not found');
       }
-      // return new ApolloError('you are not logged in');
     },
     nomineesByCategory: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {
