@@ -8,14 +8,14 @@ export default gql`
     regNo: Int
     email: String
     isConfirmed: Boolean
-    roles: [Role]
+    # roles: [Role]
     createdAt: String
     updatedAt: String
   }
   
   extend type Query {
     user: User
-    users(skip: Int, limit: Int, keyword: String): UserSearch
+    # users(skip: Int, limit: Int, keyword: String): UserSearch
     userById(id: String!): User
   }
 `;
