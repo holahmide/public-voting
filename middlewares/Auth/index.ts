@@ -64,19 +64,19 @@ export const isAdmin: RequestHandler = async (req: any, res, next) => {
 };
 
 export const verifySignIn: RequestHandler = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { regno, passcode } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ regno });
     if (!user) {
       return res.status(404).json({
         status: false,
         message: 'user not found',
       });
     }
-    const isValid = await user.validatePassword(password);
+    const isValid = await user.validatePassword(passcode);
     if (!isValid) {
       return res.status(401).send({
-        message: 'incorrect password',
+        message: 'incorrect passcode',
         data: {
           user: null,
         },

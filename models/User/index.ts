@@ -7,8 +7,8 @@ const User = new Schema(
   {
     firstName: String,
     lastName: String,
+    regno: Number,
     email: String,
-    regNo: Number,
     password: String,
     isConfirmed: {
       type: Boolean,

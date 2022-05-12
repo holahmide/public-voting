@@ -31,3 +31,6 @@ export const TOKEN_TYPES: TokenTypes = [
   'user/email-confirmation',
   'auth/reset-password'
 ]
+
+// generated passcode length
+export const PASSCODE_LENGTH = 15

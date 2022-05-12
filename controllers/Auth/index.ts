@@ -18,9 +18,9 @@ import {
 } from '../../templates';
 
 export const signIn: RequestHandler = async (req, res) => {
-  const { email } = req.body;
+  const { regno } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ regno });
     const access_token = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: JWT_DURATION,
     });

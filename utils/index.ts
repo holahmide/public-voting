@@ -1,5 +1,6 @@
 import server_error from './server';
 import token from './token';
+import passcode from './passcode';
 import mail from './mail';
 import validation from './validation';
 import Multer from './multer';
@@ -10,6 +11,9 @@ export const serverError = server_error;
 
 // token utils
 export const { tokenGenerator } = token;
+
+// passcode utils
+export const { passcodeGenerator } = passcode;
 
 // mail utils
 export const { sendMail } = mail;

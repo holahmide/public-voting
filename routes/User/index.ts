@@ -1,21 +1,23 @@
 import { Router } from 'express';
-import { validateCreateUser, validateUpdateUser, validateChangePassword } from '../../validators/User';
-import { verifyCreateUser, findUser, verifyUpdateUser, verifyChangePassword } from '../../middlewares/User';
-import { createUser, updateUser, deleteUser, changePassword, addRole, removeRole } from '../../controllers/User';
+import { validateCreateUser } from '../../validators/User';
+import { verifyCreateUser, findUser } from '../../middlewares/User';
+import {
+  createUser,
+  deleteUser,
+  addRole,
+  removeRole,
+} from '../../controllers/User';
 import { isAuthenticated, isSuperUser, isAdmin } from '../../middlewares/Auth';
 import { confirmValidation } from '../../utils';
 
 const router = Router();
 
-router.post('/register', validateCreateUser(), confirmValidation, verifyCreateUser, createUser);
-
-router.put(
-  '/update',
-  isAuthenticated,
-  validateUpdateUser(),
+router.post(
+  '/register',
+  validateCreateUser(),
   confirmValidation,
-  verifyUpdateUser,
-  updateUser
+  verifyCreateUser,
+  createUser
 );
 
 router.delete(
@@ -24,15 +26,6 @@ router.delete(
   isSuperUser,
   findUser,
   deleteUser
-);
-
-router.post(
-  '/change-password',
-  isAuthenticated,
-  validateChangePassword(),
-  confirmValidation,
-  verifyChangePassword,
-  changePassword
 );
 
 router.get(

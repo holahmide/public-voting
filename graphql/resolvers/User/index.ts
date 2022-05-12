@@ -12,14 +12,6 @@ export default {
       }
       return new AuthenticationError('you are not logged in');
     },
-    // users: async (_: any, args: any, context: GraphqlContext) => {
-    //   if (context.isSuperUser) {
-    //     return {
-    //       data: User.find({}),
-    //     };
-    //   }
-    //   return new AuthenticationError('you are not a super user');
-    // },
     userById: async (_: any, args: any, context: GraphqlContext) => {
       const user = await User.findById(args.id).populate('roles');
       if (user) return user;

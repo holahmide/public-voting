@@ -33,10 +33,10 @@ export const createSession: RequestHandler = async (req: any, res) => {
     if (req.file) {
       const image = await uploadMedia(
         req.file,
-        `voting/sessions/${createdSession._id}`,
+        `${createdSession.slug}/${createdSession._id}`,
         createdSession._id
       );
-      createdSession['logo'] = image.secure_url;
+      createdSession['logo'] = image.path;
 
       // Delete image from local folder
       fs.unlinkSync(req.file.path);
@@ -89,10 +89,10 @@ export const updateSession: RequestHandler = async (req: any, res) => {
     if (req.file) {
       const image = await uploadMedia(
         req.file,
-        `voting/sessions/${updatedSession._id}`,
+        `${updatedSession.slug}/${updatedSession._id}`,
         updatedSession._id
       );
-      updatedSession['logo'] = image.secure_url;
+      updatedSession['logo'] = image.path;
     }
 
     updatedSession.save();

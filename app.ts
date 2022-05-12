@@ -16,6 +16,8 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 app.use(cookieParser());
+app.use(express.static('public'));
+
 // dev middlewares
 let isDev = false;
 if (isDev) {

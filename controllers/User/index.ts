@@ -1,7 +1,13 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import { serverError, tokenGenerator, sendMail } from '../../utils';
+import got from 'got';
+import {
+  serverError,
+  tokenGenerator,
+  sendMail,
+  passcodeGenerator,
+} from '../../utils';
 import User from '../../models/User';
 import Token from '../../models/Token';
 import {
@@ -9,19 +15,48 @@ import {
   JWT_DURATION,
   COOKIE_CONFIG,
   MERCHANT_URL,
+  PASSCODE_LENGTH,
 } from '../../config';
 import {
   emailConfirmationTemplate,
   updateEmailConfirmationTemplate,
 } from '../../templates';
+import databaseConnection from '../../models';
 
 export const createUser: RequestHandler = async (req, res) => {
-  const { email } = req.body;
+  // Start mongoose session
+  const session = await databaseConnection.startSession();
+
   try {
+    session.startTransaction();
+    // Get User details API
+    const userData = {
+      firstName: 'Olamide',
+      lastName: 'Adeniyi',
+      email: 'adeniyi.olamide@lmu.edu.ng',
+    };
+    // const { data } = await got
+    //   .post('https://httpbin.org/anything', {
+    //     json: {
+    //       hello: 'world',
+    //     },
+    //   })
+    //   .json();
+    const { email } = userData;
+
+    // End API Session
+
+    // Generate Passcode
+    const password = passcodeGenerator(PASSCODE_LENGTH);
+
+    // Create User
     const user = await User.create({
       ...req.body,
+      ...userData,
+      password,
     });
-    // email Confirmation
+
+    // email Confirmation with passcode information
     const token = tokenGenerator();
     await Token.create({
       token,
@@ -31,18 +66,22 @@ export const createUser: RequestHandler = async (req, res) => {
     });
     const mailStatus = await sendMail(
       email,
-      'Email Confirmation 📨',
+      'College Voting Passcode 📨',
       emailConfirmationTemplate({
         // @ts-ignore
         name: user.firstName,
         link: `${MERCHANT_URL}/auth/confirm-email/${token}`,
+        passcode: password,
       })
     );
+
     // JWT
     const access_token = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: JWT_DURATION,
     });
     res.cookie('access_token', access_token, COOKIE_CONFIG);
+
+    await session.commitTransaction();
 
     return res.status(201).json({
       status: true,
@@ -52,6 +91,7 @@ export const createUser: RequestHandler = async (req, res) => {
       },
     });
   } catch (err) {
+    await session.abortTransaction();
     serverError(res, err);
   }
 };

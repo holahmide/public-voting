@@ -17,6 +17,7 @@ import {
 } from '../../../controllers/Session/Nominee';
 import { isAuthenticated } from '../../../middlewares/Auth';
 import { confirmValidation, multer } from '../../../utils';
+import { findSession } from '../../../middlewares/Session';
 
 const router = Router();
 
@@ -35,6 +36,7 @@ router.post(
   '/create/multiple',
   isAuthenticated,
   multer.any(),
+  findSession,
   createMultipleNominee
 );
 

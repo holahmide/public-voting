@@ -4,7 +4,8 @@ import { EMAIL, EMAIL_PASSWORD } from '../config';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 465,
+  // port: 587,
   auth: {
     user: EMAIL,
     pass: EMAIL_PASSWORD
