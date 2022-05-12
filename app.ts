@@ -3,7 +3,9 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/User';
+import userAdminRoutes from './routes/User/admin';
 import authRoutes from './routes/Auth';
+import authAdminRoutes from './routes/Auth/admin';
 import sessionRoutes from './routes/Session';
 import categoryRoutes from './routes/Session/Category';
 import nomineeRoutes from './routes/Session/Nominee';
@@ -25,7 +27,9 @@ if (isDev) {
 }
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/auth/super', authAdminRoutes);
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/user/super', userAdminRoutes);
 app.use('/api/v1/session/category/nominee', nomineeRoutes);
 app.use('/api/v1/session/category/vote', voteRoutes);
 app.use('/api/v1/session/category', categoryRoutes);

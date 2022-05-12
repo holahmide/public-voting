@@ -21,14 +21,14 @@ import {
   emailConfirmationTemplate,
   updateEmailConfirmationTemplate,
 } from '../../templates';
-import databaseConnection from '../../models';
+import database from '../../models';
 
 export const createUser: RequestHandler = async (req, res) => {
   // Start mongoose session
-  const session = await databaseConnection.startSession();
+  const databaseConnection = await database.startSession();
 
   try {
-    session.startTransaction();
+    databaseConnection.startTransaction();
     // Get User details API
     const userData = {
       firstName: 'Olamide',
@@ -81,7 +81,7 @@ export const createUser: RequestHandler = async (req, res) => {
     });
     res.cookie('access_token', access_token, COOKIE_CONFIG);
 
-    await session.commitTransaction();
+    await databaseConnection.commitTransaction();
 
     return res.status(201).json({
       status: true,
@@ -91,7 +91,7 @@ export const createUser: RequestHandler = async (req, res) => {
       },
     });
   } catch (err) {
-    await session.abortTransaction();
+    await databaseConnection.abortTransaction();
     serverError(res, err);
   }
 };

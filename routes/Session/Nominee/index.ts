@@ -46,6 +46,7 @@ router.put(
   multer.single('picture'),
   validateUpdateNominee(),
   confirmValidation,
+  findNominee,
   verifyUpdateNominee,
   updateNominee
 );

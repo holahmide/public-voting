@@ -37,9 +37,6 @@ export const createSession: RequestHandler = async (req: any, res) => {
         createdSession._id
       );
       createdSession['logo'] = image.path;
-
-      // Delete image from local folder
-      fs.unlinkSync(req.file.path);
     }
 
     // Create categories if passed
