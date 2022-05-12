@@ -6,14 +6,14 @@ import {
   COOKIE_CONFIG,
 } from '../../config';
 import { serverError } from '../../utils';
-import User from '../../models/User';
+import Admin from '../../models/User/admin';
 import Token from '../../models/Token';
 import { passwordSchema } from '../../validators/User';
 
-export const signInAdmin: RequestHandler = async (req, res) => {
+export const signAdminIn: RequestHandler = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await Admin.findOne({ email });
     const access_token = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: JWT_DURATION,
     });
@@ -37,7 +37,7 @@ export const status: RequestHandler = async (req, res) => {
   try {
     const decoded = jwt.verify(access_token, JWT_SECRET);
     // @ts-ignore
-    const userData = await User.findOne({ _id: decoded.id });
+    const userData = await Admin.findOne({ _id: decoded.id });
     return res.status(200).json({
       status: true,
       // @ts-ignore
@@ -49,6 +49,14 @@ export const status: RequestHandler = async (req, res) => {
     serverError(res, err);
   }
 };
+
+export const signAdminOut: RequestHandler = (_, res) => {
+    res.clearCookie('access_token', COOKIE_CONFIG);
+    return res.status(200).json({
+      status: true,
+      message: 'successfully logged out',
+    });
+  };
 
 export const resetPassword: RequestHandler = async (req, res) => {
   const { token, password } = req.body;
@@ -62,7 +70,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
     });
   }
   try {
-    const user = await User.findById(token.user);
+    const user = await Admin.findById(token.user);
     user.password = password;
     await user.save();
 

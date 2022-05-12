@@ -3,23 +3,21 @@ import bcrypt from 'bcryptjs';
 
 import { PASSWORD_SALT_ROUNDS } from '../../config';
 
-const User = new Schema(
+const Admin = new Schema(
   {
     firstName: String,
     lastName: String,
-    regno: Number,
     email: String,
     password: String,
     isConfirmed: {
       type: Boolean,
       default: false,
     },
-    roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
 
-User.pre('save', async function (next) {
+Admin.pre('save', async function (next) {
   try {
     if (!this.isModified('password')) return next();
     // @ts-ignore
@@ -30,9 +28,9 @@ User.pre('save', async function (next) {
   }
 });
 
-User.methods.validatePassword = async function (data:String) {
+Admin.methods.validatePassword = async function (data:String) {
   // @ts-ignore
   return bcrypt.compare(data, this.password);
 };
 
-export default model('User', User);
+export default model('Admin', Admin);

@@ -8,7 +8,7 @@ import {
   sendMail,
   passcodeGenerator,
 } from '../../utils';
-import User from '../../models/User';
+import Admin from '../../models/User/admin';
 import Token from '../../models/Token';
 import {
   JWT_SECRET,
@@ -35,7 +35,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
     const password = passcodeGenerator(PASSCODE_LENGTH + 9);
 
     // Create User
-    const user = await User.create({
+    const user = await Admin.create({
       ...req.body,
       password,
     });
@@ -83,7 +83,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
 export const deleteAdmin: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
   try {
-    await User.deleteOne({ _id: id });
+    await Admin.deleteOne({ _id: id });
     return res.status(204).json({
       status: true,
       data: {

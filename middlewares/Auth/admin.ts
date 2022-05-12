@@ -1,10 +1,9 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 import { JWT_SECRET } from '../../config';
 import { serverError } from '../../utils';
-import User from '../../models/User';
+import Admin from '../../models/User/admin';
 import Token from '../../models/Token';
 
 export const isAdminAuthenticated: RequestHandler = async (req: any, res, next) => {
@@ -32,7 +31,7 @@ export const isAdminAuthenticated: RequestHandler = async (req: any, res, next) 
 export const verifyAdminSignIn: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await Admin.findOne({ email });
     if (!user) {
       return res.status(404).json({
         status: false,

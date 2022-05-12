@@ -5,21 +5,21 @@ import {
   isAdminAuthenticated,
 } from '../../middlewares/Auth/admin';
 import {
-  signIn,
-  signOut,
+  signAdminIn,
+  signAdminOut,
   status,
   resetPassword,
-} from '../../controllers/Auth';
+} from '../../controllers/Auth/admin';
 import {
   validateResetPassword,
-  validateSignIn,
-} from '../../validators/Auth';
+  validateAdminSignIn,
+} from '../../validators/Auth/admin';
 import { confirmValidation } from '../../utils';
 
 const router = Router();
 
-router.post('/login', validateSignIn(), confirmValidation, verifyAdminSignIn, signIn);
-router.get('/logout', signOut);
+router.post('/login', validateAdminSignIn(), confirmValidation, verifyAdminSignIn, signAdminIn);
+router.get('/logout', signAdminOut);
 router.get('/status', isAdminAuthenticated, status);
 router.post(
   '/reset-password',

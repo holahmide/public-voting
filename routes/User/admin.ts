@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateCreateAdmin } from '../../validators/User/admin';
-import { verifyCreateUser, findUser } from '../../middlewares/User';
+import { verifyCreateAdmin, findAdmin } from '../../middlewares/User/admin';
 import {
   createAdmin,
   deleteAdmin,
@@ -14,14 +14,14 @@ router.post(
   '/register',
   validateCreateAdmin(),
   confirmValidation,
-  verifyCreateUser,
+  verifyCreateAdmin,
   createAdmin
 );
 
 router.delete(
   '/delete/:id',
   isAuthenticated,
-  findUser,
+  findAdmin,
   deleteAdmin
 );
 export default router;
