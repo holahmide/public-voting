@@ -31,6 +31,7 @@ export const createNominee: RequestHandler = async (req: any, res) => {
         createdNominee._id
       );
       createdNominee['picture'] = image.path;
+      createdNominee['blurPicture'] = image.blurPath;
     }
 
     createdNominee.save();
@@ -89,6 +90,7 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
               createdNominee._id
             );
             createdNominee['picture'] = image.path;
+            createdNominee['blurPicture'] = image.blurPath;
             createdNominee.save();
           }
         }
@@ -137,6 +139,7 @@ export const updateNominee: RequestHandler = async (req: any, res) => {
         updatedNominee._id
       );
       updatedNominee['picture'] = image.path;
+      updatedNominee['blurPicture'] = image.blurPath;
     }
 
     updatedNominee.save();
@@ -158,8 +161,11 @@ export const updateNominee: RequestHandler = async (req: any, res) => {
 export const deleteNominee: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
   try {
+    // Find Nominee
     const nominee:any = await Nominee.findOne({ _id: id })
+    // Delete main picture and blur picture
     if (nominee.picture) await deleteMedia(nominee.picture)
+    if (nominee.blurPicture) await deleteMedia(nominee.blurPicture);
 
     await Nominee.deleteOne({ _id: id })
     return res.status(204).json({
