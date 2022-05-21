@@ -51,19 +51,19 @@ export const status: RequestHandler = async (req, res) => {
 };
 
 export const signAdminOut: RequestHandler = (_, res) => {
-    res.clearCookie('access_token', COOKIE_CONFIG);
-    return res.status(200).json({
-      status: true,
-      message: 'successfully logged out',
-    });
-  };
+  res.clearCookie('access_token', COOKIE_CONFIG);
+  return res.status(200).json({
+    status: true,
+    message: 'successfully logged out',
+  });
+};
 
 export const resetPassword: RequestHandler = async (req, res) => {
   const { token, password } = req.body;
   const passwordIsNotValid = passwordSchema.validate(password, {
     details: true,
   });
-  if (passwordIsNotValid.length !== 0) {
+  if (passwordIsNotValid) {
     return res.status(422).json({
       status: false,
       message: passwordIsNotValid,
