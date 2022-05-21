@@ -29,7 +29,6 @@ export const MERCHANT_URL = process.env.MERCHANT_URL || '';
 // token types
 export const TOKEN_TYPES: TokenTypes = [
   'user/email-confirmation',
-  'auth/reset-password'
 ]
 
 // generated passcode length

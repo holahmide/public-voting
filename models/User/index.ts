@@ -10,10 +10,6 @@ const User = new Schema(
     regno: Number,
     email: String,
     password: String,
-    isConfirmed: {
-      type: Boolean,
-      default: false,
-    },
     roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }

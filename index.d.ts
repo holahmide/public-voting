@@ -1,4 +1,4 @@
-type TokenType = 'user/email-confirmation' | 'auth/reset-password';
+type TokenType = 'user/email-confirmation';
 
 type TokenTypes = TokenType[];
 
@@ -21,3 +21,7 @@ type SendMail = (
   text?: string,
   attachments?: any[]
 ) => Promise<{ status: true; message: string } | SendMailReturn>;
+
+type GenerateRandomRegNo = () => number;
+type GenerateRandomNumber = (from: number, to: number) => number;
+type GenerateArrayOfLength = (num: number) => string[];
