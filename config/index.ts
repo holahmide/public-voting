@@ -21,7 +21,7 @@ export const PASSWORD_SALT_ROUNDS = 10;
 
 // company info
 export const EMAIL = process.env.EMAIL || 'olami02bj@gmail.com';
-export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || 'bolaji2002';
+export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
 
 // website info
 export const MERCHANT_URL = process.env.MERCHANT_URL || '';
