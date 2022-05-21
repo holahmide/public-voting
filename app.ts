@@ -10,7 +10,7 @@ import sessionRoutes from './routes/Session';
 import categoryRoutes from './routes/Session/Category';
 import nomineeRoutes from './routes/Session/Nominee';
 import voteRoutes from './routes/Session/Vote';
-import routesIndex from './routes';
+import validateRequestDomain from './middlewares';
 
 import { CORS_ORIGINS } from './config';
 const app = express();
@@ -27,7 +27,7 @@ if (isDev) {
   app.use(morgan('dev'));
 }
 
-app.use(routesIndex)
+app.use(validateRequestDomain)
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/auth/super', authAdminRoutes);
 app.use('/api/v1/user', userRoutes);
