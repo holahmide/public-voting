@@ -12,7 +12,7 @@ export const createVote: RequestHandler = async (req: any, res) => {
       user,
     });
 
-    await Nominee.findByIdAndUpdate({ _id: nominee }, { $inc: { votes: 1 } });
+    // await Nominee.findByIdAndUpdate({ _id: nominee }, { $inc: { votes: 1 } });
     return res.status(201).json({
       status: true,
       data: {
@@ -28,11 +28,10 @@ export const deleteVote: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
   try {
     const findVote: any = await Vote.findOne({ _id: id }).populate('nominee');
-    console.log(findVote);
-    await Nominee.findByIdAndUpdate(
-      { _id: findVote.nominee._id },
-      { $inc: { votes: -1 } }
-    );
+    // await Nominee.findByIdAndUpdate(
+    //   { _id: findVote.nominee._id },
+    //   { $inc: { votes: -1 } }
+    // );
     await Vote.deleteOne({ _id: id });
     return res.status(204).json({
       status: true,

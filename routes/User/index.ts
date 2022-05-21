@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { validateCreateUser } from '../../validators/User';
-import { verifyCreateUser, findUser } from '../../middlewares/User';
 import {
   createUser,
 } from '../../controllers/User';
@@ -12,7 +11,6 @@ router.post(
   '/register',
   validateCreateUser(),
   confirmValidation,
-  verifyCreateUser,
   createUser
 );
 

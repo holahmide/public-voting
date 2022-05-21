@@ -32,9 +32,8 @@ export default gql`
     regno: Int
     level: Int
     picture: String
-    votes: Int
     isVoted: Boolean
-    computedVotes: Int
+    votes: Int
     category: Category
     createdAt: String
     updatedAt: String

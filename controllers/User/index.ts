@@ -10,55 +10,62 @@ import {
 } from '../../utils';
 import User from '../../models/User';
 import Token from '../../models/Token';
-import {
-  MERCHANT_URL,
-  PASSCODE_LENGTH,
-} from '../../config';
+import { MERCHANT_URL, PASSCODE_LENGTH } from '../../config';
 import { emailConfirmationTemplate } from '../../templates';
 import database from '../../models';
+import { userInfo } from 'os';
 
 export const createUser: RequestHandler = async (req, res) => {
   const { regno } = req.body;
   // Start mongoose session
   const databaseConnection = await database.startSession();
 
+  // Generate Passcode
+  const password = passcodeGenerator(PASSCODE_LENGTH);
+
   try {
     databaseConnection.startTransaction();
 
-    /****** Get User details API *******/ 
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
-    });
-    const response = await fetch(
-      `https://core.lmu.edu.ng:4846/api/student/${regno}`,
-      {
-        method: 'get',
-        headers: { 'Content-Type': 'application/json' },
-        agent,
+    const findUser = await User.findOne({ regno });
+    let user: any = {};
+
+    if (findUser) {
+      user = findUser;
+      user.password = password;
+      await user.save();
+    } else {
+      /****** Get User details API *******/
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      const response = await fetch(
+        `https://core.lmu.edu.ng:4846/api/student/${regno}`,
+        {
+          method: 'get',
+          headers: { 'Content-Type': 'application/json' },
+          agent,
+        }
+      );
+      const data = await response.json();
+      /****** End API Session *******/
+
+      if (data === 'null') {
+        throw new Error('regno does not exist');
       }
-    );
-    const data = await response.json();
-    /****** End API Session *******/ 
 
-    if (data === 'null') {
-      throw new Error('regno does not exist');
+      // Get name & email
+      const { email } = data;
+      const fullName = data.fullname.toLowerCase().split(' ');
+
+      // Create User
+      user = await User.create({
+        regno,
+        email,
+        lastName: fullName[0],
+        firstName: fullName[1],
+        password
+      });
     }
-
-    // Get name & email
-    const {email} = data;
-    const fullName = data.fullname.toLowerCase().split(' ');
-
-    // Generate Passcode
-    const password = passcodeGenerator(PASSCODE_LENGTH);
-
-    // Create User
-    const user = await User.create({
-      regno,
-      email,
-      lastName: fullName[0],
-      firstName: fullName[1],
-      password,
-    });
 
     // email Confirmation with passcode information
     const token = tokenGenerator();

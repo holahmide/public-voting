@@ -20,9 +20,10 @@ const getCreateSessionPromise = () =>
           startDate,
           endDate,
           description,
+          slug: title
         });
 
-        // Creating event slug
+        // Creating session slug
         let unique = false;
         let count = 0;
         while (!unique) {
@@ -39,6 +40,8 @@ const getCreateSessionPromise = () =>
           count += 1;
         }
 
+        await createdSession.save();
+
         // create categories
         const categoriesCount = generateRandomNumber(1, 5);
         const createCategories = generateArrayOfLength(categoriesCount).map((_: any) =>
@@ -51,7 +54,6 @@ const getCreateSessionPromise = () =>
             `${categoriesCount} CATEGOR(IES) CREATED FOR ${createdSession.title}✨`
           );
         });
-
 
         resolve(null);
       } catch (err) {

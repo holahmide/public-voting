@@ -5,6 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon --quiet index.ts",
+    "start:prod": "node build/index.js",
+    "seed-db": "ts-node ./seeds",
     "build": "tsc --project ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
