@@ -1,14 +1,16 @@
 /* eslint-disable no-console */
 import nodemailer from 'nodemailer';
-import { EMAIL, EMAIL_PASSWORD } from '../config';
+import { EMAIL, EMAIL_CLIENT_ID, EMAIL_SECRET } from '../config';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
-  // port: 587,
+  secure: true,
   auth: {
+    type: 'OAuth2',
     user: EMAIL,
-    pass: EMAIL_PASSWORD
+    serviceClient: EMAIL_CLIENT_ID,
+    privateKey: EMAIL_SECRET,
   },
 });
 

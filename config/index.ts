@@ -22,6 +22,8 @@ export const PASSWORD_SALT_ROUNDS = 10;
 // company info
 export const EMAIL = process.env.EMAIL || 'olami02bj@gmail.com';
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || '';
+export const EMAIL_CLIENT_ID = process.env.EMAIL_CLIENT_ID || '';
+export const EMAIL_SECRET = process.env.EMAIL_SECRET || '';
 
 // website info
 export const MERCHANT_URL = process.env.MERCHANT_URL || '';
@@ -33,4 +35,4 @@ export const TOKEN_TYPES: TokenTypes = [
 ]
 
 // generated passcode length
-export const PASSCODE_LENGTH:any = process.env.PASSCODE_LENGTH || 15;
+export const PASSCODE_LENGTH: any = process.env.PASSCODE_LENGTH || 15;
