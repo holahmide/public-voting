@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 export const validateCreateAdmin = () => [
   body('email')
     .exists()
-    .withMessage('regno is required')
+    .withMessage('email is required')
     .isEmail()
     .withMessage('email is invalid')
     .trim()

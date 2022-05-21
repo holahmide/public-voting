@@ -6,16 +6,25 @@ import { JWT_SECRET } from '../../config';
 import { serverError } from '../../utils';
 import User from '../../models/User';
 import Token from '../../models/Token';
+import Blacklist from '../../models/User/blacklist';
 
 export const isAuthenticated: RequestHandler = async (req: any, res, next) => {
   try {
     const { access_token } = req.cookies;
-    jwt.verify(access_token, JWT_SECRET, (err: any, decoded: any) => {
+    jwt.verify(access_token, JWT_SECRET, async (err: any, decoded: any) => {
       if (err) {
         res.clearCookie('access_token');
         return res.status(401).json({
           status: false,
           message: 'You are not logged in',
+        });
+      }
+      const checkIfInBlackList = await Blacklist.exists({token: access_token})
+      if (checkIfInBlackList) {
+        res.clearCookie('access_token');
+        return res.status(401).json({
+          status: false,
+          message: 'Token Invalid!',
         });
       }
       req.user = decoded.id;

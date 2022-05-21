@@ -5,9 +5,9 @@ import Admin from '../../models/User/admin';
 import { serverError } from '../../utils';
 
 export const verifyCreateAdmin: RequestHandler = async (req, res, next) => {
-  const { regno } = req.body;
+  const { email } = req.body;
   try {
-    const userEmailTest = await Admin.findOne({ regno });
+    const userEmailTest = await Admin.findOne({ email });
     if (userEmailTest) {
       return res.status(400).json({
         status: false,

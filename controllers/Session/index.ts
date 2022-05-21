@@ -3,7 +3,6 @@ import { RequestHandler } from 'express';
 import { serverError, uploadMedia } from '../../utils';
 import Session from '../../models/Session';
 import Category from '../../models/Session/Category';
-import fs from 'fs';
 
 export const createSession: RequestHandler = async (req: any, res) => {
   const { user } = req;

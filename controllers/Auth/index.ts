@@ -11,11 +11,11 @@ import {
 import { sendMail, serverError, tokenGenerator } from '../../utils';
 import User from '../../models/User';
 import Token from '../../models/Token';
-import { passwordSchema } from '../../validators/User';
 import {
   requestEmailConfirmationTemplate,
   resetPasswordTemplate,
 } from '../../templates';
+import Blacklist from '../../models/User/blacklist';
 
 export const signIn: RequestHandler = async (req, res) => {
   const { regno } = req.body;
@@ -44,7 +44,7 @@ export const status: RequestHandler = async (req, res) => {
   try {
     const decoded = jwt.verify(access_token, JWT_SECRET);
       // @ts-ignore
-    const userData = await User.findOne({_id : decoded.id});
+    const userData = await User.findOne({_id : decoded.id}, { password:0 });
     return res.status(200).json({
       status: true,
       // @ts-ignore
@@ -57,8 +57,13 @@ export const status: RequestHandler = async (req, res) => {
   }
 };
 
-export const signOut: RequestHandler = (_, res) => {
+export const signOut: RequestHandler = async (req, res) => {
+  const { access_token } = req.cookies;
+  // Blacklist JWT
+  await Blacklist.create({token: access_token});
+  // Clear cookie
   res.clearCookie('access_token', COOKIE_CONFIG);
+
   return res.status(200).json({
     status: true,
     message: 'successfully logged out',
@@ -66,6 +71,42 @@ export const signOut: RequestHandler = (_, res) => {
 };
 
 export const sendConfirmationEmail: RequestHandler = async (req: any, res) => {
+  const { user: user_id } = req;
+  try {
+    await Token.deleteMany({
+      user_id,
+      type: 'user/email-confirmation',
+    });
+
+    const user = await User.findById(user_id);
+
+    const token = tokenGenerator();
+    await Token.create({
+      expires: dayjs().add(2, 'd'),
+      user: user._id,
+      token,
+      type: 'user/email-confirmation',
+    });
+
+    const mailStatus = await sendMail(
+      user.email,
+      'Email Confirmation 📨',
+      requestEmailConfirmationTemplate({
+        name: user.firstName,
+        link: `${MERCHANT_URL}/auth/confirm-email/${token}`,
+      })
+    );
+
+    return res.status(200).json({
+      status: true,
+      mailStatus,
+    });
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
+export const resendPasscode: RequestHandler = async (req: any, res) => {
   const { user: user_id } = req;
   try {
     await Token.deleteMany({
@@ -183,77 +224,6 @@ export const requestResetPassword: RequestHandler = async (req, res) => {
     return res.status(200).json({
       status: true,
       mailStatus: mailStatus.status,
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const resetPassword: RequestHandler = async (req, res) => {
-  const { token, password } = req.body;
-  const passwordIsNotValid = passwordSchema.validate(password, {
-    details: true,
-  });
-  if (passwordIsNotValid.length !== 0) {
-    return res.status(422).json({
-      status: false,
-      message: passwordIsNotValid,
-    });
-  }
-  try {
-    const user = await User.findById(token.user);
-    user.password = password;
-    await user.save();
-
-    await Token.deleteOne({ _id: token._id });
-    return res.status(200).json({
-      status: true,
-      data: {
-        message: 'successfully reset password',
-      },
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const confirmResetPassword: RequestHandler = async (req, res) => {
-  const { token } = req.body;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.array(),
-    });
-  }
-  if (!token) {
-    return res.status(422).json({
-      status: false,
-      message: 'token is required',
-    });
-  }
-  try {
-    const findToken = await Token.findOne({
-      token,
-      type: 'auth/reset-password',
-    });
-    if (!findToken) {
-      return res.status(403).json({
-        status: false,
-        message: 'token invalid',
-      });
-    }
-
-    if (dayjs() > findToken.expires) {
-      return res.status(403).json({
-        status: false,
-        message: 'token expired',
-      });
-    }
-
-    return res.status(200).json({
-      status: true,
-      message: 'reset password link is valid',
     });
   } catch (err) {
     serverError(res, err);

@@ -2,6 +2,7 @@ import { ApolloServer } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
 import User from '../models/User';
+import Admin from '../models/User/admin';
 import schemas from './schemas';
 import resolvers from './resolvers';
 
@@ -15,19 +16,30 @@ const getUser = (token: string) => {
     return null;
   }
 };
+
 const graphqlServer = new ApolloServer({
   typeDefs: schemas,
   resolvers,
   context: async ({req}) => {
-    const { access_token } = req.cookies;
-    const user_id = getUser(access_token);
-    const user = await User.findById(user_id).populate('roles');
-    const userRoles = user_id !== null ? user.roles : [];
+    const { access_token } = req.cookies; // Normal User
+    const {special_access_token} = req.cookies; // Admin User
+    let user_id = null;
+    let user:any = {};
+    let isAdmin = false;
+    if(access_token) { // User
+      user_id = getUser(access_token);
+      user = await User.findById(user_id);
+    }
+    else if (special_access_token) { // Admin
+      user_id = getUser(special_access_token);
+      user = await Admin.findById(user_id);
+      isAdmin = true
+    }
+
     return {
         user: user_id,
         isLoggedIn: user_id !== null,
-        isAdmin: userRoles.map((el: any) => el.name).includes('ADMIN'),
-        isSuperUser: userRoles.map((el: any) => el.name).includes('SUPER_USER'),
+        isAdmin,
       };
   },
 });

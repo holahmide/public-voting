@@ -33,9 +33,9 @@ export const signAdminIn: RequestHandler = async (req, res) => {
 };
 
 export const status: RequestHandler = async (req, res) => {
-  const { access_token } = req.cookies;
+  const { special_access_token } = req.cookies;
   try {
-    const decoded = jwt.verify(access_token, JWT_SECRET);
+    const decoded = jwt.verify(special_access_token, JWT_SECRET);
     // @ts-ignore
     const userData = await Admin.findOne({ _id: decoded.id });
     return res.status(200).json({

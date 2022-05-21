@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server-express';
 import userSchema from './User';
+import adminSchema from './User/admin';
 import sessionSchema from './Session';
 
 const linkSchema = gql`
@@ -7,4 +8,4 @@ const linkSchema = gql`
     _: Boolean
   }
 `;
-export default [linkSchema, userSchema, sessionSchema];
+export default [linkSchema, userSchema, adminSchema, sessionSchema];

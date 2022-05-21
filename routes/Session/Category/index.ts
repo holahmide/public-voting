@@ -14,14 +14,14 @@ import {
   updateCategory,
   deleteCategory,
 } from '../../../controllers/Session/Category';
-import { isAuthenticated } from '../../../middlewares/Auth';
+import { isAdminAuthenticated } from '../../../middlewares/Auth/admin';
 import { confirmValidation } from '../../../utils';
 
 const router = Router();
 
 router.post(
   '/create',
-  isAuthenticated,
+  isAdminAuthenticated,
   validateCreateCategory(),
   confirmValidation,
   findSession,
@@ -31,13 +31,13 @@ router.post(
 
 router.put(
   '/update/:id',
-  isAuthenticated,
+  isAdminAuthenticated,
   validateUpdateCategory(),
   confirmValidation,
   verifyUpdateCategory,
   updateCategory
 );
 
-router.delete('/delete/:id', isAuthenticated, findCategory, deleteCategory);
+router.delete('/delete/:id', isAdminAuthenticated, findCategory, deleteCategory);
 
 export default router;

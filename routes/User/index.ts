@@ -4,8 +4,6 @@ import { verifyCreateUser, findUser } from '../../middlewares/User';
 import {
   createUser,
   deleteUser,
-  addRole,
-  removeRole,
 } from '../../controllers/User';
 import { isAuthenticated, isSuperUser, isAdmin } from '../../middlewares/Auth';
 import { confirmValidation } from '../../utils';
@@ -26,22 +24,6 @@ router.delete(
   isSuperUser,
   findUser,
   deleteUser
-);
-
-router.get(
-  '/add-role/:id/:roleId',
-  isAuthenticated,
-  isAdmin,
-  findUser,
-  addRole
-);
-
-router.delete(
-  '/remove-role/:id/:roleId',
-  isAuthenticated,
-  isAdmin,
-  findUser,
-  removeRole
 );
 
 export default router;

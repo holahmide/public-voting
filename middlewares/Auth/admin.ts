@@ -8,8 +8,8 @@ import Token from '../../models/Token';
 
 export const isAdminAuthenticated: RequestHandler = async (req: any, res, next) => {
   try {
-    const { access_token } = req.cookies;
-    jwt.verify(access_token, JWT_SECRET, (err: any, decoded: any) => {
+    const { special_access_token } = req.cookies;
+    jwt.verify(special_access_token, JWT_SECRET, (err: any, decoded: any) => {
       if (err) {
         res.clearCookie('special_access_token');
         return res.status(401).json({

@@ -1,7 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import got from 'got';
 import {
   serverError,
   tokenGenerator,
@@ -11,24 +10,17 @@ import {
 import Admin from '../../models/User/admin';
 import Token from '../../models/Token';
 import {
-  JWT_SECRET,
-  JWT_DURATION,
-  COOKIE_CONFIG,
   MERCHANT_URL,
   PASSCODE_LENGTH,
 } from '../../config';
 import {
   emailConfirmationTemplate,
-  updateEmailConfirmationTemplate,
 } from '../../templates';
 import database from '../../models';
 
 export const createAdmin: RequestHandler = async (req, res) => {
   // Start mongoose session
   const databaseConnection = await database.startSession();
-
-  const { email } = req.body;
-
   try {
     databaseConnection.startTransaction();
 
@@ -58,12 +50,6 @@ export const createAdmin: RequestHandler = async (req, res) => {
         passcode: password,
       })
     );
-
-    // JWT
-    const access_token = jwt.sign({ id: user._id }, JWT_SECRET, {
-      expiresIn: JWT_DURATION,
-    });
-    res.cookie('access_token', access_token, COOKIE_CONFIG);
 
     await databaseConnection.commitTransaction();
 
