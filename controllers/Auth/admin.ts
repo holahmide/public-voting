@@ -1,14 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { RequestHandler } from 'express';
-import {
-  JWT_SECRET,
-  JWT_DURATION,
-  COOKIE_CONFIG,
-} from '../../config';
+import { JWT_SECRET, JWT_DURATION, COOKIE_CONFIG } from '../../config';
 import { serverError } from '../../utils';
 import Admin from '../../models/User/admin';
-import Token from '../../models/Token';
-import { passwordSchema } from '../../validators/User';
 
 export const signAdminIn: RequestHandler = async (req, res) => {
   const { email } = req.body;
@@ -56,32 +50,4 @@ export const signAdminOut: RequestHandler = (_, res) => {
     status: true,
     message: 'successfully logged out',
   });
-};
-
-export const resetPassword: RequestHandler = async (req, res) => {
-  const { token, password } = req.body;
-  const passwordIsNotValid = passwordSchema.validate(password, {
-    details: true,
-  });
-  if (passwordIsNotValid) {
-    return res.status(422).json({
-      status: false,
-      message: passwordIsNotValid,
-    });
-  }
-  try {
-    const user = await Admin.findById(token.user);
-    user.password = password;
-    await user.save();
-
-    await Token.deleteOne({ _id: token._id });
-    return res.status(200).json({
-      status: true,
-      data: {
-        message: 'successfully reset password',
-      },
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
 };

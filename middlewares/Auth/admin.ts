@@ -52,37 +52,3 @@ export const verifyAdminSignIn: RequestHandler = async (req, res, next) => {
     serverError(res, err);
   }
 };
-
-export const verifyResetPassword: RequestHandler = async (req, res, next) => {
-  const { token } = req.body;
-  if (!token) {
-    return res.status(422).json({
-      status: false,
-      message: 'token is required',
-    });
-  }
-  try {
-    const findToken = await Token.findOne({
-      token,
-      type: 'auth/reset-password',
-    });
-    if (!findToken) {
-      return res.status(403).json({
-        status: false,
-        message: 'token invalid',
-      });
-    }
-
-    if (dayjs() > findToken.expires) {
-      return res.status(403).json({
-        status: false,
-        message: 'token expired',
-      });
-    }
-
-    req.body.token = findToken;
-    next();
-  } catch (err) {
-    serverError(res, err);
-  }
-};

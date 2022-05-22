@@ -1,24 +1,6 @@
 import { RequestHandler } from 'express';
-import { validationResult } from 'express-validator';
 import User from '../../models/User';
-// import { passwordSchema } from '../../validators/User';
 import { serverError } from '../../utils';
-
-export const verifyCreateUser: RequestHandler = async (req, res, next) => {
-  const { regno } = req.body;
-  try {
-    const userRegnoTest = await User.findOne({ regno });
-    if (userRegnoTest) {
-      return res.status(400).json({
-        status: false,
-        message: 'regno provided already exists, check your webmail for the passcode sent',
-      });
-    }
-    next();
-  } catch (err) {
-    serverError(res, err);
-  }
-};
 
 export const findUser: RequestHandler = async (req: any, res, next) => {
   try {

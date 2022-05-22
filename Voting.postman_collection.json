@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "9137392b-0fe6-4d94-8cb4-869fbc8d170c",
+		"name": "Voting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"regno\":1700669\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/user/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"regno\": 1700634,\n   \"passcode\": \"wtWDrb0qdMGwkfX\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"email\": \"olami02bj@gmail.com\",\n   \"password\": \"Olamiposi2005\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/super/status",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"super",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://core.lmu.edu.ng:4846/api/student/1700634",
+					"protocol": "https",
+					"host": [
+						"core",
+						"lmu",
+						"edu",
+						"ng"
+					],
+					"port": "4846",
+					"path": [
+						"api",
+						"student",
+						"1700634"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create-category-votes",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nominee\": \"623f8b13a3e70ce5e27a896e\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/session/category/vote/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"session",
+						"category",
+						"vote",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-category-votes",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"CBS Voting\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/session/category/vote/delete/6236767745d1eb972d10119e",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"session",
+						"category",
+						"vote",
+						"delete",
+						"6236767745d1eb972d10119e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "graphql-get-user-by-id",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($id: String!) {\n    userById (id: $id) {\n        firstName\n        lastName\n    }\n}",
+						"variables": "{\n    \"id\": \"6288ebdd517a0992960dde7f\"\n}"
+					}
+				},
+				"url": {
+					"raw": "{{graphql_base_url}}/graphql",
+					"host": [
+						"{{graphql_base_url}}"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "graphql-get-session",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($slug: String) {\n    sessionBySlug (slug: $slug) {\n        title\n        categories {\n            name\n            nominees {\n                name\n                picture\n            }\n        }\n    }\n}",
+						"variables": "{\n    \"slug\": \"coe\"\n}"
+					}
+				},
+				"url": {
+					"raw": "{{graphql_base_url}}/graphql",
+					"host": [
+						"{{graphql_base_url}}"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "graphql-get-nominee",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($id: String) {\n    nomineeById (id: $id) {\n        name\n        category {\n            name\n        }\n    }\n}",
+						"variables": "{\n    \"id\": \"62470737987f644e5b545b61\"\n}"
+					}
+				},
+				"url": {
+					"raw": "{{graphql_base_url}}/graphql",
+					"host": [
+						"{{graphql_base_url}}"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyN2QzZmU2NzU2NDVhYzNkOGU2ODhjOSIsImlhdCI6MTY1MjU0NjY3NSwiZXhwIjoxNjUzMTUxNDc1fQ.yxSvhhjQYvJk5Zb_rrZHEGrd_wP3jOQgounfF4LPkS4",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api/v1",
+			"type": "default"
+		},
+		{
+			"key": "user_email",
+			"value": "olami02bj@gmail.com",
+			"type": "default"
+		},
+		{
+			"key": "graphql_base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "default"
+		}
+	]
+}

@@ -10,7 +10,6 @@ const Nominee = new Schema(
     level: Number,
     picture: String,
     blurPicture: String,
-    votes: Number,
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
