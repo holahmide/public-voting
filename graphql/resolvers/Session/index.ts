@@ -42,6 +42,8 @@ export default {
     },
   },
   Category: {
+    updatedAt: (parent: any) => parent.updated_at.toString(),
+    createdAt: (parent: any) => parent.created_at.toString(),
     nominees: async (parent: any) => {
       const findNominees = await Nominee.find({
         category: parent.id,

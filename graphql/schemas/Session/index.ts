@@ -26,6 +26,8 @@ export default gql`
     nominees: [Nominee]
     isVoted: Boolean
     votedFor: Nominee
+    createdAt: String
+    updatedAt: String
   }
 
   type Nominee {
