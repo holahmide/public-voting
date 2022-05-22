@@ -10,6 +10,7 @@ const Nominee = new Schema(
     level: Number,
     picture: String,
     blurPicture: String,
+    department: String,
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }

@@ -32,7 +32,7 @@ export default gql`
     id: ID!
     name: String
     regno: Int
-    level: Int
+    department: String
     picture: String
     isVoted: Boolean
     votes: Int
