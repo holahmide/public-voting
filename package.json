@@ -4,8 +4,8 @@
   "description": "A Basic Voting site",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon --quiet index.ts",
-    "start:prod": "node build/index.js",
+    "dev": "nodemon --quiet index.ts",
+    "start": "node build/index.js",
     "build": "tsc --project ./  && yarn copy-files",
     "copy-files": "copyfiles -u 1 ./templates/**/*hbs build/templates",
     "seed-db": "ts-node ./seeds",
