@@ -37,10 +37,10 @@ const graphqlServer = new ApolloServer({
     }
 
     return {
-        user: user_id,
-        isLoggedIn: user_id !== null,
-        isAdmin,
-      };
+      user: user_id,
+      isLoggedIn: user_id !== null,
+      isAdmin,
+    };
   },
 });
 

@@ -19,11 +19,13 @@ export default gql`
 
   type Category {
     id: ID!
+    slug: String
     name: String
     description: String
     session: Session
     nominees: [Nominee]
     isVoted: Boolean
+    votedFor: Nominee
   }
 
   type Nominee {
@@ -53,6 +55,7 @@ export default gql`
     sessionBySlug(slug: String): Session
     sessions: [Session]
     categoryById(id: String): Category
+    categoryBySlug(slug: String): Category
     categories: [Category]
     nomineeById(id: String): Nominee
     nomineesByCategory(category: String): [Nominee]
