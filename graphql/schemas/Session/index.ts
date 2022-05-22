@@ -34,6 +34,7 @@ export default gql`
     regno: Int
     department: String
     picture: String
+    blurPicture: String
     isVoted: Boolean
     votes: Int
     category: Category

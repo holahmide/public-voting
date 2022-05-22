@@ -2,10 +2,10 @@ import casual from 'casual';
 import slugify from 'slugify';
 import Session from '../../models/Session';
 import {
-    generateArrayOfLength,
-    generateRandomNumber,
-  } from '../../utils';
-  import getCreateCategoryPromise from './Category';
+  generateArrayOfLength,
+  generateRandomNumber,
+} from '../../utils';
+import getCreateCategoryPromise from './Category';
 
 const getCreateSessionPromise = () =>
   new Promise((resolve, reject) => {
@@ -43,9 +43,9 @@ const getCreateSessionPromise = () =>
         await createdSession.save();
 
         // create categories
-        const categoriesCount = generateRandomNumber(1, 5);
-        const createCategories = generateArrayOfLength(categoriesCount).map((_: any) =>
-          getCreateCategoryPromise(createdSession._id)
+        const categoriesCount = generateRandomNumber(8, 12);
+        const createCategories = ["Most Fashionable", "Face of COE (Male)", "Face of COE (Female)", "Most Creative", "Most Inovative", "Sportman Woman (Woman)", "Sportman (Male)"].map((el) =>
+          getCreateCategoryPromise(createdSession._id, el)
         );
         await Promise.all(createCategories).then(() => {
           // @ts-ignore

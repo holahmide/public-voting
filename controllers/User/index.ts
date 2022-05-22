@@ -13,7 +13,6 @@ import Token from '../../models/Token';
 import { MERCHANT_URL, PASSCODE_LENGTH } from '../../config';
 import { emailConfirmationTemplate } from '../../templates';
 import database from '../../models';
-import { userInfo } from 'os';
 
 export const createUser: RequestHandler = async (req, res) => {
   const { regno } = req.body;
@@ -49,7 +48,7 @@ export const createUser: RequestHandler = async (req, res) => {
       const data = await response.json();
       /****** End API Session *******/
 
-      if (data === 'null') {
+      if (data === null) {
         throw new Error('regno does not exist');
       }
 

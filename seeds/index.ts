@@ -77,7 +77,7 @@ const POPULATE_OPTIONS_DISPLAY = `(${POPULATE_OPTIONS.reduce(
                   return 1;
                 }
                 const count = Number(result.count);
-                const createSessions = generateArrayOfLength(count).map(
+                const createSessions = generateArrayOfLength(1).map(
                   (_: any) => getCreateSessionPromise()
                 );
                 await Promise.all(createSessions).then(() => {
