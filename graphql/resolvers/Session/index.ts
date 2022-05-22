@@ -27,15 +27,18 @@ export default {
   Nominee: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
     createdAt: (parent: any) => parent.created_at.toString(),
-    votes: async (parent: any) => {
-      const count = await Vote.find({ nominee: parent.id });
-      return count.length;
+    votes: async (parent: any, _: any, context: GraphqlContext) => {
+      if (context.isAdmin) {
+        const count = await Vote.find({ nominee: parent.id });
+        return count.length;
+      } else return 0;
     },
     isVoted: async (parent: any, _: any, context: GraphqlContext) => {
       const findVote = await Vote.findOne({
         nominee: parent.id,
         user: context.user,
       });
+
       if (findVote == null) return false;
       else return true;
     },
