@@ -22,17 +22,17 @@ const getCreateCategoryNomineePromise = (category: string) =>
     })();
   });
 
-const getCreateCategoryPromise = (session: string) =>
+const getCreateCategoryPromise = (session: string, name: string) =>
   new Promise((resolve, reject) => {
     (async () => {
       try {
         const createdCategory = await Category.create({
-          name: casual.name,
+          name,
           description: casual.description,
           session,
         });
         // create nominees
-        const nomineeCount = generateRandomNumber(0, 5);
+        const nomineeCount = generateRandomNumber(5, 10);
         const createNominees = generateArrayOfLength(nomineeCount).map(
           (_: any) => getCreateCategoryNomineePromise(createdCategory._id)
         );

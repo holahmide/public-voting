@@ -23,6 +23,7 @@ export const signIn: RequestHandler = async (req, res) => {
         user: {
           id: user._id,
           token: access_token,
+          regno,
         },
       },
     });
@@ -35,8 +36,8 @@ export const status: RequestHandler = async (req, res) => {
   const { access_token } = req.cookies;
   try {
     const decoded = jwt.verify(access_token, JWT_SECRET);
-      // @ts-ignore
-    const userData = await User.findOne({_id : decoded.id}, { password:0 });
+    // @ts-ignore
+    const userData = await User.findOne({ _id: decoded.id }, { password: 0 });
     return res.status(200).json({
       status: true,
       // @ts-ignore
@@ -52,7 +53,7 @@ export const status: RequestHandler = async (req, res) => {
 export const signOut: RequestHandler = async (req, res) => {
   const { access_token } = req.cookies;
   // Blacklist JWT
-  await Blacklist.create({token: access_token});
+  await Blacklist.create({ token: access_token });
   // Clear cookie
   res.clearCookie('access_token', COOKIE_CONFIG);
 
