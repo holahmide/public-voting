@@ -36,6 +36,7 @@ export default {
         nominee: parent.id,
         user: context.user,
       });
+
       if (findVote == null) return false;
       else return true;
     },
@@ -57,13 +58,13 @@ export default {
     },
     votedFor: async (parent: any, _: any, context: GraphqlContext) => {
       // if (context.isLoggedIn) {
-        const findVote = await Vote.findOne({
-          category: parent.id,
-          user: context.user,
-        });
-        if (!findVote) return null;
-        const nominee = await Nominee.findOne({ _id: findVote.nominee });
-        return nominee;
+      const findVote = await Vote.findOne({
+        category: parent.id,
+        user: context.user,
+      });
+      if (!findVote) return null;
+      const nominee = await Nominee.findOne({ _id: findVote.nominee });
+      return nominee;
       // } else {
       //   return null;
       // }

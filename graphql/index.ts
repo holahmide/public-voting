@@ -20,13 +20,13 @@ const getUser = (token: string) => {
 const graphqlServer = new ApolloServer({
   typeDefs: schemas,
   resolvers,
-  context: async ({req}) => {
+  context: async ({ req }) => {
     const { access_token } = req.cookies; // Normal User
-    const {special_access_token} = req.cookies; // Admin User
+    const { special_access_token } = req.cookies; // Admin User
     let user_id = null;
-    let user:any = {};
+    let user: any = {};
     let isAdmin = false;
-    if(access_token) { // User
+    if (access_token) { // User
       user_id = getUser(access_token);
       user = await User.findById(user_id);
     }
