@@ -8,6 +8,15 @@ import {
   generateArrayOfLength,
 } from '../../utils';
 
+
+const departments = [
+  'Electrical and Information Engineering',
+  'Mechanical Engineering',
+  'Civil Engineering',
+  'Chemical Engineering',
+  'Agric & Biosystems Engineering',
+]
+
 const getCreateCategoryNomineePromise = (category: string) =>
   new Promise((resolve, reject) => {
     (async () => {
@@ -16,6 +25,7 @@ const getCreateCategoryNomineePromise = (category: string) =>
           name: casual.name,
           regno: generateRandomRegNo(),
           level: generateRandomNumber(1, 5) * 100,
+          department: departments[Math.floor(Math.random() * departments.length)],
           picture:
             'images/coe/nominees/6282d2ada44d9bddf04af9a4/6282d2ada44d9bddf04af9a4.jpg',
           blurPicture: 'images/coe/nominees/6282d2ada44d9bddf04af9a4/blur.jpg',
@@ -36,6 +46,7 @@ const getCreateCategoryPromise = (session: string, name: string) =>
           name,
           description: casual.description,
           session,
+          slug: name,
         });
         // create nominees
         const nomineeCount = generateRandomNumber(5, 10);
