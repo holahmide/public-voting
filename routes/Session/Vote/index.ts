@@ -2,11 +2,11 @@ import { Router } from 'express';
 import {
   validateCreateVote,
 } from '../../../validators/Session/Vote';
-import { findCategory } from '../../../middlewares/Session/Category';
 import { findNominee } from '../../../middlewares/Session/Nominee';
 import {
   findVote,
   verifyCreateVote,
+  verifyVoteTiming
 } from '../../../middlewares/Session/Vote';
 import {
   createVote,
@@ -24,6 +24,7 @@ router.post(
   confirmValidation,
   findNominee,
   verifyCreateVote,
+  verifyVoteTiming,
   createVote
 );
 

@@ -27,9 +27,11 @@ export default {
   Nominee: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
     createdAt: (parent: any) => parent.created_at.toString(),
-    votes: async (parent: any) => {
-      const count = await Vote.find({ nominee: parent.id });
-      return count.length;
+    votes: async (parent: any, _: any, context: GraphqlContext) => {
+      if (context.isAdmin) {
+        const count = await Vote.find({ nominee: parent.id });
+        return count.length;
+      } else return 0;
     },
     isVoted: async (parent: any, _: any, context: GraphqlContext) => {
       const findVote = await Vote.findOne({
@@ -59,17 +61,17 @@ export default {
       else return true;
     },
     votedFor: async (parent: any, _: any, context: GraphqlContext) => {
-      // if (context.isLoggedIn) {
-      const findVote = await Vote.findOne({
-        category: parent.id,
-        user: context.user,
-      });
-      if (!findVote) return null;
-      const nominee = await Nominee.findOne({ _id: findVote.nominee });
-      return nominee;
-      // } else {
-      //   return null;
-      // }
+      if (context.isLoggedIn) {
+        const findVote = await Vote.findOne({
+          category: parent.id,
+          user: context.user,
+        });
+        if (!findVote) return null;
+        const nominee = await Nominee.findOne({ _id: findVote.nominee });
+        return nominee;
+      } else {
+        return null;
+      }
     },
   },
   Vote: {
