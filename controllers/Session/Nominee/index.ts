@@ -57,7 +57,8 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
   try {
     databaseConnection.startTransaction();
 
-    const session: any = Session.findOne({ slug: req.body.session });
+    const session: any = await Session.findOne({ slug: req.body.session });
+
 
     const nominees = JSON.parse(req.body.nominees);
     const resultArray = await Promise.all(
