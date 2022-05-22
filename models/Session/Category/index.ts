@@ -6,6 +6,10 @@ const Category = new Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+    },
     description: String,
     session: { type: Schema.Types.ObjectId, ref: 'Session' },
   },
