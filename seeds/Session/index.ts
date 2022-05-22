@@ -2,7 +2,6 @@ import casual from 'casual';
 import slugify from 'slugify';
 import Session from '../../models/Session';
 import {
-  generateArrayOfLength,
   generateRandomNumber,
 } from '../../utils';
 import getCreateCategoryPromise from './Category';
@@ -19,6 +18,7 @@ const getCreateSessionPromise = () =>
           title,
           startDate,
           endDate,
+          isActive: true,
           description,
           slug: title
         });
