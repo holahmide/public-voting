@@ -1,27 +1,72 @@
 import { RequestHandler } from 'express';
-import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import { serverError, tokenGenerator, sendMail } from '../../utils';
+import fetch from 'node-fetch';
+import https from 'https';
+import {
+  serverError,
+  tokenGenerator,
+  sendMail,
+  passcodeGenerator,
+} from '../../utils';
 import User from '../../models/User';
 import Token from '../../models/Token';
-import {
-  JWT_SECRET,
-  JWT_DURATION,
-  COOKIE_CONFIG,
-  MERCHANT_URL,
-} from '../../config';
-import {
-  emailConfirmationTemplate,
-  updateEmailConfirmationTemplate,
-} from '../../templates';
+import { MERCHANT_URL, PASSCODE_LENGTH } from '../../config';
+import { emailConfirmationTemplate } from '../../templates';
+import database from '../../models';
 
 export const createUser: RequestHandler = async (req, res) => {
-  const { email } = req.body;
+  const { regno } = req.body;
+  // Start mongoose session
+  const databaseConnection = await database.startSession();
+
+  // Generate Passcode
+  const password = passcodeGenerator(PASSCODE_LENGTH);
+
   try {
-    const user = await User.create({
-      ...req.body,
-    });
-    // email Confirmation
+    databaseConnection.startTransaction();
+
+    const findUser = await User.findOne({ regno });
+    let user: any = {};
+
+    if (findUser) {
+      user = findUser;
+      user.password = password;
+      await user.save();
+    } else {
+      /****** Get User details API *******/
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      const response = await fetch(
+        `https://core.lmu.edu.ng:4846/api/student/${regno}`,
+        {
+          method: 'get',
+          headers: { 'Content-Type': 'application/json' },
+          agent,
+        }
+      );
+      const data = await response.json();
+      /****** End API Session *******/
+
+      if (data === null) {
+        throw new Error('regno does not exist');
+      }
+
+      // Get name & email
+      const { email } = data;
+      const fullName = data.fullname.toLowerCase().split(' ');
+
+      // Create User
+      user = await User.create({
+        regno,
+        email,
+        lastName: fullName[0],
+        firstName: fullName[1],
+        password
+      });
+    }
+
+    // email Confirmation with passcode information
     const token = tokenGenerator();
     await Token.create({
       token,
@@ -30,19 +75,17 @@ export const createUser: RequestHandler = async (req, res) => {
       expires: dayjs().add(1, 'd'),
     });
     const mailStatus = await sendMail(
-      email,
-      'Email Confirmation 📨',
+      user.email,
+      'College Voting Passcode 📨',
       emailConfirmationTemplate({
         // @ts-ignore
         name: user.firstName,
         link: `${MERCHANT_URL}/auth/confirm-email/${token}`,
+        passcode: password,
       })
     );
-    // JWT
-    const access_token = jwt.sign({ id: user._id }, JWT_SECRET, {
-      expiresIn: JWT_DURATION,
-    });
-    res.cookie('access_token', access_token, COOKIE_CONFIG);
+
+    await databaseConnection.commitTransaction();
 
     return res.status(201).json({
       status: true,
@@ -52,49 +95,7 @@ export const createUser: RequestHandler = async (req, res) => {
       },
     });
   } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const updateUser: RequestHandler = async (req: any, res) => {
-  const { user } = req;
-  const { id } = req.params;
-  const { email, password } = req.body;
-  if (password) delete req.body.password;
-
-  try {
-    const findUser = await User.findOne({ _id: id || user });
-    let mailStatus: SendMailReturn = {
-      status: true,
-      message: '',
-    };
-    if (findUser.email !== email) {
-      const token = tokenGenerator();
-      await Token.create({
-        token,
-        type: 'user/email-confirmation',
-        user: findUser._id,
-        expires: dayjs().add(1, 'd'),
-      });
-      mailStatus = await sendMail(
-        email,
-        'Email Confirmation 📨',
-        updateEmailConfirmationTemplate({
-          name: findUser.firstName,
-          link: `${MERCHANT_URL}/auth/confirm-email/${token}`,
-        })
-      );
-      req.body.isConfirmed = false;
-    }
-    await User.findByIdAndUpdate({ _id: id || user }, req.body);
-    return res.status(200).json({
-      status: true,
-      data: {
-        user,
-        mailStatus,
-      },
-    });
-  } catch (err) {
+    await databaseConnection.abortTransaction();
     serverError(res, err);
   }
 };
@@ -107,67 +108,6 @@ export const deleteUser: RequestHandler = async (req: any, res) => {
       status: true,
       data: {
         message: 'user deleted',
-      },
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const changePassword: RequestHandler = async (req: any, res) => {
-  const { newPassword } = req.body;
-  const { user: user_id } = req;
-
-  try {
-    const user = await User.findById(user_id);
-    user.password = newPassword;
-    await user.save();
-
-    return res.status(200).json({
-      status: true,
-      data: {
-        message: 'Successfully changed password',
-      },
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const removeRole: RequestHandler = async (req: any, res) => {
-  const { id, roleId } = req.params;
-  try {
-    const user = await User.findById(id).populate('roles');
-    user.roles = [
-      ...user.roles
-        .filter((el: any) => el._id.toString() !== roleId)
-        .map((el: any) => el._id),
-    ];
-    await user.save();
-
-    return res.status(200).json({
-      status: true,
-      data: {
-        message: 'Successfully removed role',
-      },
-    });
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
-export const addRole: RequestHandler = async (req: any, res) => {
-  const { id, roleId } = req.params;
-  try {
-    const user = await User.findById(id).populate('roles');
-    if (!user.roles.includes(roleId)) {
-      user.roles = [...user.roles, roleId];
-    }
-    await user.save();
-    return res.status(200).json({
-      status: true,
-      data: {
-        message: 'Successfully added role',
       },
     });
   } catch (err) {

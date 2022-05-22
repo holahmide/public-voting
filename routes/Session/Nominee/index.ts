@@ -15,14 +15,15 @@ import {
   updateNominee,
   deleteNominee,
 } from '../../../controllers/Session/Nominee';
-import { isAuthenticated } from '../../../middlewares/Auth';
+import { isAdminAuthenticated } from '../../../middlewares/Auth/admin';
 import { confirmValidation, multer } from '../../../utils';
+import { findSession } from '../../../middlewares/Session';
 
 const router = Router();
 
 router.post(
   '/create',
-  isAuthenticated,
+  isAdminAuthenticated,
   multer.single('picture'),
   validateCreateNominee(),
   confirmValidation,
@@ -33,21 +34,22 @@ router.post(
 
 router.post(
   '/create/multiple',
-  isAuthenticated,
+  isAdminAuthenticated,
   multer.any(),
   createMultipleNominee
 );
 
 router.put(
   '/update/:id',
-  isAuthenticated,
+  isAdminAuthenticated,
   multer.single('picture'),
   validateUpdateNominee(),
   confirmValidation,
+  findNominee,
   verifyUpdateNominee,
   updateNominee
 );
 
-router.delete('/delete/:id', isAuthenticated, findNominee, deleteNominee);
+router.delete('/delete/:id', isAdminAuthenticated, findNominee, deleteNominee);
 
 export default router;

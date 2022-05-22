@@ -27,20 +27,25 @@ export default {
   Nominee: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
     createdAt: (parent: any) => parent.created_at.toString(),
-    computedVotes: async (parent: any) => {
-      const count = await Vote.find({ nominee: parent.id });
-      return count.length;
+    votes: async (parent: any, _: any, context: GraphqlContext) => {
+      if (context.isAdmin) {
+        const count = await Vote.find({ nominee: parent.id });
+        return count.length;
+      } else return 0;
     },
     isVoted: async (parent: any, _: any, context: GraphqlContext) => {
       const findVote = await Vote.findOne({
         nominee: parent.id,
         user: context.user,
       });
+
       if (findVote == null) return false;
       else return true;
     },
   },
   Category: {
+    updatedAt: (parent: any) => parent.updated_at.toString(),
+    createdAt: (parent: any) => parent.created_at.toString(),
     nominees: async (parent: any) => {
       const findNominees = await Nominee.find({
         category: parent.id,
@@ -55,6 +60,19 @@ export default {
       if (findVote == null) return false;
       else return true;
     },
+    votedFor: async (parent: any, _: any, context: GraphqlContext) => {
+      if (context.isLoggedIn) {
+        const findVote = await Vote.findOne({
+          category: parent.id,
+          user: context.user,
+        });
+        if (!findVote) return null;
+        const nominee = await Nominee.findOne({ _id: findVote.nominee });
+        return nominee;
+      } else {
+        return null;
+      }
+    },
   },
   Vote: {
     updatedAt: (parent: any) => parent.updated_at.toString(),
@@ -68,25 +86,23 @@ export default {
       return new AuthenticationError('you are not logged in');
     },
     sessionById: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isLoggedIn) {
-        const session = await Session.findById(args.id).populate('user');
-        if (session) return session;
-        return new ApolloError('session not found');
-      }
-      return new ApolloError('you are not logged in');
+      const session = await Session.findById(args.id).populate('user');
+      if (session) return session;
+      return new ApolloError('session not found');
     },
-    sessionBySlug: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isLoggedIn) {
-        const session = await Session.findOne({ slug: args.slug }).populate(
-          'user'
-        );
-        if (session) return session;
-        return new ApolloError('session not found');
-      } else {
-        const session = await Session.findOne({ slug: args.slug });
-        if (session) return session;
-        return new ApolloError('session not found');
-      }
+    sessionBySlug: async (_: any, args: any) => {
+      const session = await Session.findOne({ slug: args.slug }).populate(
+        'user'
+      );
+      if (session) return session;
+      return new ApolloError('session not found');
+    },
+    categoryBySlug: async (_: any, args: any) => {
+      const category = await Category.findOne({ slug: args.slug }).populate(
+        'session'
+      );
+      if (category) return category;
+      return new ApolloError('session not found');
     },
     nomineesByCategory: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {
@@ -97,12 +113,9 @@ export default {
       return new ApolloError('you are not logged in');
     },
     nomineeById: async (_: any, args: any, context: GraphqlContext) => {
-      if (context.isLoggedIn) {
-        const nominee = await Nominee.findById(args.id).populate('category');
-        if (nominee) return nominee;
-        return new ApolloError('nominee not found');
-      }
-      return new ApolloError('you are not logged in');
+      const nominee = await Nominee.findById(args.id).populate('category');
+      if (nominee) return nominee;
+      return new ApolloError('nominee not found');
     },
     votesByNominee: async (_: any, args: any, context: GraphqlContext) => {
       if (context.isLoggedIn) {

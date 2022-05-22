@@ -1,8 +1,7 @@
-<!DOCTYPE html>
 <html lang='en'>
   <head>
     <meta charset='UTF-8' />
-    <title>{{name}}, Welcome to MultiVote</title>
+    <title>{{name}}, Login Passcode</title>
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
   </head>
@@ -11,8 +10,8 @@
       style="
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
           Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        background-color: rgb(250, 237, 237);
-        color: rgb(24, 16, 16);
+        background-color: #E8DAB2;
+        color: black;
         margin: 0 auto;
         padding: 20px 30px;
         border-radius: 8px;
@@ -21,41 +20,23 @@
         max-width: 550px;
       "
     >
-      <!-- <img
-        src='https://res.cloudinary.com/voting-cloud/image/upload/v1623969626/logo_ltvxii.png'
-        alt='logo'
-        height='80px'
-        width='80px'
-      /> -->
-      <h1 style='color: #22201e'>Hi {{name}}!</h1>
-      <p>
-        We're happy you signed up to MultiVote 🚀. Before you start creating & hosting polls, please confirm your email address by
-        clicking the button below.
+      <h1 style='color: #8E3B46; text-transform: capitalize'>Hi {{name}}!</h1>
+      <p style='color: black'>
+        We're happy you signed up for college voting 2022 🚀. Please use the
+        following passcode to login.
       </p>
-      <a
-        href='{{link}}'
-        style='
-          display: inline-block;
-          padding: 10px 20px;
-          text-decoration: none;
-          color: rgb(255, 255, 255);
-          background: linear-gradient(90deg, #2e30a0 17%, #646d96 100%);
-          font-weight: bold;
-          border-radius: 5px;
-        '
-      >Verify Email</a>
+
+      <div style='margin-top:10px;'>Passcode: <b>{{passcode}}</b></div>
       <div
         style='
           margin-top: 50px;
-          color: #22201e;
+          color: black;
           font-weight: semibold;
         '
       >
-        <p style='margin: 0'>Welcome to MultiVote!</p>
         <div style='font-size: 14px; margin-top: 10px'>
           <small>If you recieved this email without signing up or requesting it,
             please ignore it!</small><br />
-          <small>This confirmation link will expire in 24 hours.</small>
         </div>
       </div>
     </div>

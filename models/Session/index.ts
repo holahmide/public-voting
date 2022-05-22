@@ -12,6 +12,7 @@ const Session = new Schema(
     },
     description: String,
     logo: String,
+    blurLogo: String,
     startDate: Date,
     endDate: Date,
     isActive: Boolean,

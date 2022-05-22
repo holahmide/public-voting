@@ -1,28 +1,42 @@
 import { RequestHandler } from 'express';
-import { serverError, uploadMedia } from '../../../utils';
+import { serverError, uploadMedia, deleteMedia } from '../../../utils';
 import Nominee from '../../../models/Session/Nominee';
+import Session from '../../../models/Session';
 import Category from '../../../models/Session/Category';
-import fs from 'fs';
+import database from '../../../models';
 
-export const createNominee: RequestHandler = async (req, res) => {
+export const createNominee: RequestHandler = async (req: any, res) => {
+  // Start mongoose session
+  const databaseConnection = await database.startSession();
+
+  const { category } = req.body;
   try {
+    databaseConnection.startTransaction();
+
     const createdNominee = await Nominee.create({
       ...req.body,
+    });
+
+    // Get Session Slug
+    const findCategory: any = await Category.findOne({ _id: category });
+    const findSession: any = await Session.findOne({
+      _id: findCategory.session,
     });
 
     // upload images
     if (req.file) {
       const image = await uploadMedia(
         req.file,
-        `voting/sessions/${createdNominee._id}`,
+        `${findSession.slug}/nominees`,
         createdNominee._id
       );
-      createdNominee['picture'] = image.secure_url;
-      // Delete image from local folder
-      fs.unlinkSync(req.file.path);
+      createdNominee['picture'] = image.path;
+      createdNominee['blurPicture'] = image.blurPath;
     }
 
     createdNominee.save();
+
+    await databaseConnection.commitTransaction();
 
     return res.status(201).json({
       status: true,
@@ -31,25 +45,41 @@ export const createNominee: RequestHandler = async (req, res) => {
       },
     });
   } catch (err) {
+    await databaseConnection.abortTransaction();
     serverError(res, err);
   }
 };
 
 export const createMultipleNominee: RequestHandler = async (req: any, res) => {
+  // Start mongoose session
+  const databaseConnection = await database.startSession();
+
   try {
+    databaseConnection.startTransaction();
+
+    const session: any = Session.findOne({ slug: req.body.session });
+
     const nominees = JSON.parse(req.body.nominees);
     const resultArray = await Promise.all(
       nominees.map(async (nominee: any) => {
+        // Confirm that category does exist
         let findCategory = await Category.findOne({ _id: nominee.category });
         if (!findCategory) return;
+
+        // Confirm that nominee does not exist
         let findNominee = await Nominee.findOne({
-          name: nominee.name,
+          regno: nominee.regno,
           category: nominee.category,
         });
         if (findNominee) return;
+
+        // Create Nominee
+        nominee.regno = Number(nominee.regno)
         const createdNominee = await Nominee.create({
           ...nominee,
         });
+
+        // Upload Images
         if (req.files) {
           const imageIndex = req.files.findIndex(
             (el: any) => el.fieldname == `image-${nominee.s_n}`
@@ -57,19 +87,20 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
           if (imageIndex > -1) {
             const image = await uploadMedia(
               req.files[imageIndex],
-              `voting/sessions/${createdNominee._id}`,
+              `${session.slug}/nominees`,
               createdNominee._id
             );
-            createdNominee['picture'] = image.secure_url;
+            createdNominee['picture'] = image.path;
+            createdNominee['blurPicture'] = image.blurPath;
             createdNominee.save();
-            // Delete image from local folder
-            fs.unlinkSync(req.files[imageIndex].path);
           }
         }
 
         return createdNominee;
       })
     );
+
+    await databaseConnection.commitTransaction();
 
     return res.status(201).json({
       status: true,
@@ -78,28 +109,43 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
       },
     });
   } catch (err) {
+    await databaseConnection.abortTransaction();
     serverError(res, err);
   }
 };
 
 export const updateNominee: RequestHandler = async (req: any, res) => {
+  // Start mongoose session
+  const databaseConnection = await database.startSession();
+
   const { id } = req.params;
 
   try {
+    databaseConnection.startTransaction();
+
     await Nominee.findByIdAndUpdate({ _id: id }, req.body);
     const updatedNominee = await Nominee.findOne({ _id: id });
+
+    // Get Session Slug
+    const findCategory: any = await Category.findOne({ _id: updatedNominee.category });
+    const findSession: any = await Session.findOne({
+      _id: findCategory.session,
+    });
 
     // upload images
     if (req.file) {
       const image = await uploadMedia(
         req.file,
-        `voting/nominees/${updatedNominee._id}`,
+        `${findSession.slug}/nominees`,
         updatedNominee._id
       );
-      updatedNominee['picture'] = image.secure_url;
+      updatedNominee['picture'] = image.path;
+      updatedNominee['blurPicture'] = image.blurPath;
     }
 
     updatedNominee.save();
+
+    await databaseConnection.commitTransaction();
 
     return res.status(200).json({
       status: true,
@@ -108,6 +154,7 @@ export const updateNominee: RequestHandler = async (req: any, res) => {
       },
     });
   } catch (err) {
+    await databaseConnection.abortTransaction();
     serverError(res, err);
   }
 };
@@ -115,7 +162,13 @@ export const updateNominee: RequestHandler = async (req: any, res) => {
 export const deleteNominee: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
   try {
-    await Nominee.deleteOne({ _id: id });
+    // Find Nominee
+    const nominee:any = await Nominee.findOne({ _id: id })
+    // Delete main picture and blur picture
+    if (nominee.picture) await deleteMedia(nominee.picture)
+    if (nominee.blurPicture) await deleteMedia(nominee.blurPicture);
+
+    await Nominee.deleteOne({ _id: id })
     return res.status(204).json({
       status: true,
       data: {

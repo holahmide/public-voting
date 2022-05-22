@@ -1,41 +1,55 @@
 /* eslint-disable no-unused-vars */
-import cloudinary from 'cloudinary';
+import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
 
 type UploadMedia = (
   file: any,
   folder: string,
   name: string
-) => Promise<cloudinary.UploadApiResponse>;
-type DeleteMedia = (public_id: string) => Promise<cloudinary.DeleteApiResponse>;
+) => Promise<{ path: String, blurPath: String }>;
+type DeleteMedia = (public_id: string) => Promise<{ message: String }>;
 
 const uploadMedia: UploadMedia = (file: any, folder: string, name: string) =>
   new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(
-      file.path,
-      {
-        resource_type: 'auto',
-        folder: `${process.env.NODE_ENV}/${folder}`,
-        public_id: `${name}`,
-        overwrite: true,
-      },
-      (error, result) => {
-        if (error) reject(error);
-        // @ts-ignore
-        resolve(result);
+    // Establish the target Folder public/images/sessionSlug/filename/filename.extension
+    const targetPath = path.join(
+      __dirname,
+      `../public/images/${folder}/${name}`
+    );
+    if (!fs.existsSync(targetPath)) {
+      fs.mkdirSync(targetPath, { recursive: true });
+    }
+
+    // Name + Extension
+    let fullName = `${name}${path.extname(file.originalname)}`;
+    // Move from temporary folder to target folder
+    fs.rename(
+      path.join(__dirname, `../${file.path}`),
+      `${targetPath}/${fullName}`,
+      (err) => {
+        if (err) return reject(err);
+
+        // Add Low Quality image blur.jpg
+        sharp(`${targetPath}/${fullName}`)
+          // .jpeg({ mozjpeg: true, quality: 70 })
+          .jpeg({ mozjpeg: true, quality: 20 })
+          .toFile(
+            `${targetPath}/blur${path.extname(file.originalname)}`,
+            function (err) {
+              if (err) return reject(err);
+              resolve({ path: `images/${folder}/${name}/${fullName}`, blurPath: `images/${folder}/${name}/blur${path.extname(file.originalname)}` });
+            }
+          );
       }
     );
   });
 
-const deleteMedia: DeleteMedia = (public_id) =>
+const deleteMedia: DeleteMedia = (pathName) =>
   new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.destroy(
-      `${process.env.NODE_ENV}/${public_id}`,
-      (error, result) => {
-        if (error) reject(error);
-        // @ts-ignore
-        resolve(result);
-      }
-    );
+    if (!pathName) return reject({ message: 'path not specified' });
+    fs.unlinkSync(path.join(__dirname, `../public/${pathName}`));
+    return resolve({ message: 'deleted file.' });
   });
 
 export default {

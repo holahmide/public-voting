@@ -2,16 +2,16 @@ import { Router } from 'express';
 import { validateCreateSession, validateUpdateSession } from '../../validators/Session';
 import { findSession } from '../../middlewares/Session';
 import { createSession, updateSession, deleteSession } from '../../controllers/Session';
-import { isAuthenticated } from '../../middlewares/Auth';
+import { isAdminAuthenticated } from '../../middlewares/Auth/admin';
 import { confirmValidation, multer } from '../../utils';
 
 const router = Router();
 
-router.post('/create', isAuthenticated, multer.single('logo'), validateCreateSession(), confirmValidation, createSession);
+router.post('/create', isAdminAuthenticated, multer.single('logo'), validateCreateSession(), confirmValidation, createSession);
 
 router.put(
   '/update/:id',
-  isAuthenticated,
+  isAdminAuthenticated,
   multer.single('logo'),
   validateUpdateSession(),
   confirmValidation,
@@ -20,7 +20,7 @@ router.put(
 
 router.delete(
   '/delete/:id',
-  isAuthenticated,
+  isAdminAuthenticated,
   findSession,
   deleteSession 
 );

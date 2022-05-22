@@ -5,7 +5,7 @@ export default gql`
     id: ID!
     firstName: String
     lastName: String
-    regNo: Int
+    regno: Int
     email: String
     isConfirmed: Boolean
     createdAt: String

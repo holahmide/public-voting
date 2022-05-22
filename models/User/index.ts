@@ -7,13 +7,9 @@ const User = new Schema(
   {
     firstName: String,
     lastName: String,
+    regno: Number,
     email: String,
-    regNo: Number,
     password: String,
-    isConfirmed: {
-      type: Boolean,
-      default: false,
-    },
     roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
@@ -29,12 +25,6 @@ User.pre('save', async function (next) {
     next(err);
   }
 });
-
-// Removes other model documents associated with the user on User.deleteOne()
-// User.post('deleteOne', { document: true }, async function (next) {
-//   await Blog.deleteOne({ author: this._id }).exec();
-//   next();
-// });
 
 User.methods.validatePassword = async function (data:String) {
   // @ts-ignore

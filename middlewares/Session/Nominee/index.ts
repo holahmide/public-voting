@@ -9,8 +9,8 @@ export const verifyCreateNominee: RequestHandler = async (
 ) => {
   try {
     req.body.name = req.body.name.toLowerCase();
-    let { name, category } = req.body;
-    const findNominee = await Nominee.exists({ name, category });
+    let { regno, category } = req.body;
+    const findNominee = await Nominee.exists({ regno, category });
     if (findNominee) {
       return res.status(404).json({
         status: false,
@@ -31,8 +31,8 @@ export const verifyUpdateNominee: RequestHandler = async (
     if (!req.body.name) next();
     try {
       req.body.name = req.body.name.toLowerCase();
-      let { name, category } = req.body;
-      const findNominee = await Nominee.exists({ name, category });
+      let { regno, category } = req.body;
+      const findNominee = await Nominee.exists({ regno, category });
       if (findNominee && (findNominee._id != req.body.id && findNominee._id != req.body._id)) {
         return res.status(404).json({
           status: false,
