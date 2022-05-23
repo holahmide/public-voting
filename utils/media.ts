@@ -7,7 +7,7 @@ type UploadMedia = (
   file: any,
   folder: string,
   name: string
-) => Promise<{ path: String, blurPath: String }>;
+) => Promise<{ path: String; blurPath: String }>;
 type DeleteMedia = (public_id: string) => Promise<{ message: String }>;
 
 const uploadMedia: UploadMedia = (file: any, folder: string, name: string) =>
@@ -17,15 +17,15 @@ const uploadMedia: UploadMedia = (file: any, folder: string, name: string) =>
       __dirname,
       `../public/images/${folder}/${name}`
     );
-    if (!fs.existsSync(targetPath)) {
-      fs.mkdirSync(targetPath, { recursive: true });
-    }
-
     // Name + Extension
     let fullName = `${name}${path.extname(file.originalname)}`;
+    if (!fs.existsSync(targetPath)) {
+      fs.mkdirSync(`${targetPath}`, { recursive: true });
+    }
+
     // Move from temporary folder to target folder
     fs.rename(
-      path.join(__dirname, `../${file.path}`),
+      path.join(__dirname, `../../${file.path}`),
       `${targetPath}/${fullName}`,
       (err) => {
         if (err) return reject(err);
@@ -38,7 +38,12 @@ const uploadMedia: UploadMedia = (file: any, folder: string, name: string) =>
             `${targetPath}/blur${path.extname(file.originalname)}`,
             function (err) {
               if (err) return reject(err);
-              resolve({ path: `images/${folder}/${name}/${fullName}`, blurPath: `images/${folder}/${name}/blur${path.extname(file.originalname)}` });
+              resolve({
+                path: `images/${folder}/${name}/${fullName}`,
+                blurPath: `images/${folder}/${name}/blur${path.extname(
+                  file.originalname
+                )}`,
+              });
             }
           );
       }
