@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, `./public`)));
 
 app.use(morgan('dev'));
 
-app.use(validateRequestDomain);
+app.use('/api', validateRequestDomain);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/auth/super', authAdminRoutes);
 app.use('/api/v1/user', userRoutes);
