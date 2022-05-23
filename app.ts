@@ -20,19 +20,11 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(
-  __dirname,
-  `./public`
-)));
-console.log(__dirname)
+app.use(express.static(path.join(__dirname, `./public`)));
 
-// dev middlewares
-let isDev = false;
-if (isDev) {
-  app.use(morgan('dev'));
-}
+app.use(morgan('dev'));
 
-app.use(validateRequestDomain)
+app.use(validateRequestDomain);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/auth/super', authAdminRoutes);
 app.use('/api/v1/user', userRoutes);
