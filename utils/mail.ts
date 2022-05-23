@@ -20,7 +20,7 @@ const sendMail: SendMail = async (email, subject, html, text, attachments) => {
     await transporter.verify();
     await transporter.sendMail({
       from: {
-        name: "COE Voting <hello@damiisdandy.com>",
+        name: "College Of Engineering",
         address: EMAIL,
       },
       to: email,
