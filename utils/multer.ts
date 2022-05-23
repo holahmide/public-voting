@@ -3,10 +3,11 @@ import { v4 } from 'uuid';
 
 const storage = multer.diskStorage({
   destination: (_, __, cb: any) => {
-    cb(null, './temporary_uploads/');
+    let path = `./temporary_uploads/`;
+    cb(null, path);
   },
   filename: (_: any, file: any, cb: any) => {
-    cb(null, `${new Date().toISOString()}-${v4()}${file.originalname}`);
+    cb(null, `${new Date().toISOString().replace(/:/g, '-')}-${v4()}${file.originalname}`);
   },
 });
 
