@@ -3,3 +3,6 @@
 gcloud/*
 build
 public/images/*
+temporary_uploads/*
+!public/images/.gitkeep
+!temporary_uploads/.gitkeep 
