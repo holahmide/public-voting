@@ -2,3 +2,4 @@
 .env
 gcloud/*
 build
+public/images/*
