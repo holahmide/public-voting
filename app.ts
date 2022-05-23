@@ -11,6 +11,7 @@ import categoryRoutes from './routes/Session/Category';
 import nomineeRoutes from './routes/Session/Nominee';
 import voteRoutes from './routes/Session/Vote';
 import validateRequestDomain from './middlewares';
+import path from 'path';
 
 import { CORS_ORIGINS } from './config';
 const app = express();
@@ -19,7 +20,11 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 app.use(cookieParser());
-app.use(express.static('public'));
+app.use(express.static(path.join(
+  __dirname,
+  `./public`
+)));
+console.log(__dirname)
 
 // dev middlewares
 let isDev = false;
