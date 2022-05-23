@@ -57,7 +57,7 @@ export const createMultipleNominee: RequestHandler = async (req: any, res) => {
   try {
     databaseConnection.startTransaction();
 
-    const session: any = Session.findOne({ slug: req.body.session });
+    const session: any = await Session.findOne({ slug: req.body.session });
 
     const nominees = JSON.parse(req.body.nominees);
     const resultArray = await Promise.all(
@@ -163,7 +163,7 @@ export const deleteNominee: RequestHandler = async (req: any, res) => {
   const { id } = req.params;
   try {
     // Find Nominee
-    const nominee:any = await Nominee.findOne({ _id: id })
+    const nominee: any = await Nominee.findOne({ _id: id })
     // Delete main picture and blur picture
     if (nominee.picture) await deleteMedia(nominee.picture)
     if (nominee.blurPicture) await deleteMedia(nominee.blurPicture);
