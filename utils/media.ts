@@ -14,14 +14,14 @@ const uploadMedia: UploadMedia = (file: any, folder: string, name: string) =>
       file.path,
       {
         resource_type: 'auto',
-        folder: `${process.env.NODE_ENV}/${folder}`,
+        folder: `coe-vote/${folder}`,
         public_id: `${name}`,
         overwrite: true,
       },
       (error, result) => {
         if (error) reject(error);
         // @ts-ignore
-        resolve(result);
+        resolve({path: result.secure_url, blurPath: ''});
       }
     );
   });
